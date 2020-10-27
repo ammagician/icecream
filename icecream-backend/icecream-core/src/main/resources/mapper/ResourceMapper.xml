@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.core.mapper.ResourceMapper">
+    <resultMap type="com.apang.icecream.core.domain.bo.Resource" id="ResourceMap">
+    	<id property="id" column="id" />
+        <result property="parentId" column="parentId" />  
+        <result property="parentName" column="parentName" /> 
+        <result property="portalId" column="portalId" />
+        <result property="portalName" column="portalName" />
+        <result property="name" column="name" />  
+        <result property="code" column="code" />  
+        <result property="url" column="url" /> 
+        <result property="icon" column="icon" /> 
+        <result property="type" column="type" />  
+        <result property="orderNo" column="orderNo" /> 
+        <result property="relationId" column="relationId" /> 
+        <result property="remarks" column="remarks"/>  
+    </resultMap> 
+
+	<select id="getCustomPage" resultMap="ResourceMap">
+	    select res.*, res2.name parentName, res3.name portalName
+	     from (select * from s_resource ${ew.customSqlSegment}) res
+	     left join s_resource res2 on res.parentId = res2.id
+	     left join s_resource res3 on res.portalId = res3.id
+     	order by res.orderNo
+	</select>
+	<select id="getCustomList" resultMap="ResourceMap">
+	    select res.*, res2.name parentName, res3.name portalName
+	     from (select * from s_resource ${ew.customSqlSegment}) res
+	     left join s_resource res2 on res.parentId = res2.id
+	     left join s_resource res3 on res.portalId = res3.id
+     	order by res.orderNo
+	</select>
+	
+	<select id="getMaxOrder" resultType="integer" parameterType="Map">
+	     select IFNULL(max(orderNo), 1) from s_resource where parentId = #{parentId}
+	     <if test="types!=null and types.size()>0">
+            and type in 
+			<foreach item="t" collection="types" open="(" separator="," close=")">
+			    #{t}
+			</foreach>
+         </if>
+	</select>
+
+	<select id="getGrantResources" resultMap="ResourceMap">
+	    select res.*, res2.name parentName, res3.name portalName
+	     from (select * from s_resource where id in (select resId from s_role_resource where roleId in (select roleId from s_user_role where userId = #{userId}))) res
+	     left join s_resource res2 on res.parentId = res2.id
+	     left join s_resource res3 on res.portalId = res3.id
+     	order by res.orderNo
+	</select>
+	
+</mapper>

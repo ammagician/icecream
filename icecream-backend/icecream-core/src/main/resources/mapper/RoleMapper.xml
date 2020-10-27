@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.core.mapper.RoleMapper">
+
+	<resultMap type="com.apang.icecream.systemmanager.domain.vo.RoleVo" id="RoleVo">
+		<id property="id" column="id" />
+		<id property="name" column="name" />
+		<id property="code" column="code" />
+		<id property="remarks" column="remarks" />
+        <collection property="portalList" resultMap="ResourcesMap"/>
+    </resultMap>
+    <resultMap type="com.apang.icecream.core.domain.bo.Resource" id="ResourcesMap">
+    	<id property="Id" column="resId" />  
+        <result property="name" column="resName" /> 
+    </resultMap> 
+    
+    <select id="getPage" resultMap="RoleVo">
+	     select role.*, res.id resId, res.name resName from (select * from s_role ${ew.customSqlSegment}) role 
+			left join s_role_resource rr on role.id = rr.roleId and rr.type=1
+			left join s_resource res on rr.resId = res.id
+	</select>
+	
+	<select id="getList" resultMap="RoleVo">
+	     select role.*, res.id resId, res.name resName from (select * from s_role ${ew.customSqlSegment}) role 
+			left join s_role_resource rr on role.id = rr.roleId and rr.type=1
+			left join s_resource res on rr.resId = res.id
+	</select>
+
+</mapper>

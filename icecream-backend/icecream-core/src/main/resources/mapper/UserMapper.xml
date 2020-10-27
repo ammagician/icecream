@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.core.mapper.UserMapper">
+	<resultMap type="com.apang.icecream.core.domain.bo.User" id="User">
+		<id property="id" column="id" />
+		<result property="userName" column="userName" />
+		<result property="loginName" column="loginName" />
+		<result property="password" column="password" />
+		<result property="mobile" column="mobile" />
+		<result property="email" column="email" />
+		<result property="orgId" column="orgId" />
+		<result property="orgName" column="orgName" />
+		<result property="tenantId" column="tenantId" />
+		<result property="remarks" column="remarks" />
+		<result property="isDisabled" column="isDisabled" />
+		<result property="avatar" column="avatar" />
+        <collection property="roles" resultMap="RoleMap"/>  
+    </resultMap>
+    <resultMap type="com.apang.icecream.core.domain.bo.Role" id="RoleMap">
+    	<result property="id" column="roleId" />
+        <result property="name" column="roleName" />  
+        <result property="code" column="roleCode" /> 
+        <result property="remarks" column="roleRemarks" />
+    </resultMap>
+
+	<select id="getDetailById" resultMap="User">
+    	select * from
+    		(select s_user.*, s_org.name orgName from s_user
+    			left join s_org on s_user.orgId=s_org.id
+
+    			where s_user.id=#{id}
+    		 ) uu
+    	left join (select role.id roleId, role.name roleName, role.code roleCode, role.remarks roleRemarks from s_role role, s_user_role where role.id = s_user_role.roleId and userId = #{id}) rr
+    	on 1=1
+    </select>
+    
+    <select id="getPage" resultMap="User">
+    	select u.*, s_org.name orgName from (select * from s_user ${ew.customSqlSegment}) u
+   			left join s_org on u.orgId=s_org.id
+    </select>
+    
+    <select id="getList" resultMap="User">
+    	select u.*, s_org.name orgName from (select * from s_user ${ew.customSqlSegment}) u
+   			left join s_org on u.orgId=s_org.id
+    </select>
+
+	<delete id="clearRolesByUsers">
+	  delete from s_user_role where userId in 
+	  <foreach item="id" collection="ids" open="(" separator="," close=")">
+	    #{id}
+	  </foreach>
+	</delete>
+	
+	<insert id="insertRoles" >
+	  insert into s_user_role (roleId, userId) values
+	  <foreach item="role" collection="roles" separator=",">
+	    (#{role.id}, #{userId})
+	  </foreach>
+	</insert>
+
+
+</mapper>

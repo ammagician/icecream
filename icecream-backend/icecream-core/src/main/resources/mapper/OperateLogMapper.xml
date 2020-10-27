@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.core.mapper.OperateLogMapper">
+    <resultMap type="com.apang.icecream.core.domain.bo.OperateLog" id="TenantVo">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="rootOrg" column="rootOrg" />
+        <result property="remarks" column="remarks" />
+        <collection property="portals" resultMap="PortalsMap" />
+    </resultMap>
+
+    <select id="getPage" resultMap="TenantVo">
+    	select t.*, s_tenant_portal.portalId from (select * from s_tenant ${ew.customSqlSegment}) t
+   			left join s_tenant_portal on t.id=s_tenant_portal.tenantId
+    </select>
+</mapper>

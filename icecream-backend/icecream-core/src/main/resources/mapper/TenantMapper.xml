@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.core.mapper.TenantMapper">
+
+	<resultMap type="com.apang.icecream.core.domain.bo.Tenant" id="Tenant">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="rootOrg" column="rootOrg" />
+		<result property="remarks" column="remarks" />
+        <collection property="portals" resultMap="PortalsMap" />
+    </resultMap>
+	<resultMap id="PortalsMap" type="string">
+		<result column="portalId" />
+	</resultMap>
+
+	<resultMap type="com.apang.icecream.core.domain.bo.TenantPortal" id="tenantPortal">
+		<result property="portalId" column="portalId" />
+		<result property="tenantId" column="tenantId" />
+	</resultMap>
+    
+    <select id="getDetailById" resultMap="Tenant">
+		select t.*, s_tenant_portal.portalId from s_tenant t
+   			left join s_tenant_portal on t.id=s_tenant_portal.tenantId
+   			where t.id=#{id}
+    </select>
+    
+    <select id="getPage" resultMap="Tenant">
+    	select t.*, s_tenant_portal.portalId from (select * from s_tenant ${ew.customSqlSegment}) t
+   			left join s_tenant_portal on t.id=s_tenant_portal.tenantId
+    </select>
+
+	<delete id="clearPortals">
+	  delete from s_tenant_portal where tenantId = #{id}
+	</delete>
+	
+	<insert id="insertPortals" >
+	  insert into s_tenant_portal (tenantId, portalId) values
+	  <foreach item="id" collection="ids" separator=",">
+	    (#{tenantId}, #{id})
+	  </foreach>
+	</insert>
+
+	<select id="findAllByTenantId" resultMap="tenantPortal">
+		select * from s_tenant_portal
+   			where tenantId=#{tenantId}
+    </select>
+
+
+</mapper>

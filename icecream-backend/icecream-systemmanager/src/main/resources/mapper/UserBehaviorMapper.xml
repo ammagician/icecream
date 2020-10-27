@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apang.icecream.systemmanager.mapper.UserBehaviorMapper">
+	<select id="getViewCount" resultType="int">
+		select count(1) as COUNT
+		from S_BEHAVIOR_LOG
+		where  VISITOR IS NOT NULL AND ACCESSIP IS NOT NULL AND TYPE = 1
+	</select>
+
+	<select id="getBrowserCount" resultType="java.util.Map">
+		select
+		count(browserName) as browserCount, browserName
+		from S_BEHAVIOR_LOG
+		where
+		browserName is not null  AND TYPE = 1
+		GROUP BY browserName
+	</select>
+	<select id="getPlatformCount" resultType="java.util.Map">
+	    select
+		count(device) as deviceCount, device
+		from S_BEHAVIOR_LOG
+		where
+		device is not null  AND TYPE = 1
+		GROUP BY device
+	</select>
+	<select id="getCityCount" resultType="java.util.Map">
+	    select
+		count(accessCity) as  cityCount,accessCity
+		from S_BEHAVIOR_LOG
+		where
+		accessCity is not null and visitor is not null  AND TYPE = 1
+		GROUP BY accessCity
+		order by cityCount
+	</select>
+	<select id="getProvinceCount" resultType="java.util.Map">
+		select
+	    count(accessCname) as provinceCount,accessCname
+	    from S_BEHAVIOR_LOG
+	    where
+	    accessCname is not null  AND TYPE = 1
+	    GROUP BY accessCname
+	    order by provinceCount
+	</select>
+
+	<select id="getTimeCount" resultType="java.util.Map">
+		SELECT from_unixtime(ACCESSTIMEIN/1000,'%Y/%m/%d %H:%i') TIME, COUNT(1) VIEWCOUNT, COUNT(DISTINCT VISITOR) VISITORCOUNT
+		FROM S_BEHAVIOR_LOG
+		WHERE ACCESSTIMEIN &gt;= unix_timestamp(date_sub(now(), interval 0.5 hour))*1000 AND ACCESSTIMEIN &lt; unix_timestamp(date_add(now(), interval 0.5 hour))*1000 AND VISITOR IS NOT NULL  AND TYPE = 1
+		GROUP BY from_unixtime(ACCESSTIMEIN/1000,'%Y/%m/%d %H:%i')
+		ORDER BY TIME
+	</select>
+	
+	<select id="getDayCount" resultType="java.util.Map">
+	    SELECT B.TIME, IFNULL(A.VIEWCOUNT,0) VIEWCOUNT, IFNULL(A.VISITORCOUNT,0) VISITORCOUNT, IFNULL(A.IPCOUNT,0) IPCOUNT, IFNULL(AVGTIME,0) AVGTIME 
+		FROM (
+			SELECT cast(date_format(FROM_UNIXTIME(accessTimeIn/1000),'%H') as unsigned int) TIME, COUNT(1) VIEWCOUNT, 
+			COUNT(DISTINCT VISITOR) VISITORCOUNT, COUNT(DISTINCT ACCESSIP) IPCOUNT, ROUND(AVG(accessTime),0) AVGTIME
+	      	FROM S_BEHAVIOR_LOG 
+	      	WHERE date(FROM_UNIXTIME(accessTimeIn/1000)) = date(date_sub(now(), interval #{days} day)) AND VISITOR IS NOT NULL AND ACCESSIP IS NOT NULL AND TYPE = 1
+	      	GROUP BY date_format(FROM_UNIXTIME(accessTimeIn/1000),'%H')
+	    ) A RIGHT JOIN (SELECT (@ROWNUM := @ROWNUM+1)-1 AS TIME FROM (SELECT @ROWNUM := 0) R, S_BEHAVIOR_LOG WHERE (@ROWNUM - 1) &lt; cast(date_format(date_sub(now(), interval #{days} day),'%H') as unsigned int )) B
+	    ON A.TIME = B.TIME
+	    ORDER BY B.TIME DESC
+	</select>
+
+	<select id="getTodayViewCount" resultType="int">
+		select count(1) as USER_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+	    date_format(now(), '%Y-%m-%d')  AND TYPE = 1
+	</select>
+	<select id="getTodayIpCount" resultType="int">
+	    select count(distinct T.ACCESSIP) as IP_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+		date_format(now(), '%Y-%m-%d')  AND TYPE = 1
+	</select>
+	<select id="getTodayUserCount" resultType="int">
+	    select count(distinct T.VISITOR) as IP_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+		date_format(now(), '%Y-%m-%d')  AND TYPE = 1
+	</select>
+	
+	<select id="getYestodayViewCount" resultType="int">
+		select count(1) as USER_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+       	date_format(date_sub(now(), interval 1 day),
+               '%Y-%m-%d')  AND TYPE = 1
+	</select>
+	<select id="getYestodayIpCount" resultType="int">
+	    select count(distinct T.ACCESSIP) as IP_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+		date_format(date_sub(now(), interval 1 day),'%Y-%m-%d')  AND TYPE = 1
+	</select>
+	<select id="getYestodayUserCount" resultType="int">
+	    select count(distinct T.VISITOR) as User_COUNT
+		from S_BEHAVIOR_LOG T
+		where date_format(t.createDate, '%Y-%m-%d') =
+		date_format(date_sub(now(), interval 1 day),'%Y-%m-%d')  AND TYPE = 1
+	</select>
+	
+	<select id="getYestodayNowIpCount" resultType="int">
+		select count(distinct T.VISITOR) as IP_COUNT
+		from S_BEHAVIOR_LOG T
+		where T.createDate &gt; date(date_sub(now(), interval 1 day)) and  T.createDate &lt;= date_sub(now(), interval 1 day)  AND TYPE = 1
+	</select>
+	<select id="getYestodayNowViewCount" resultType="int">
+		select count(1) as View_COUNT
+		from S_BEHAVIOR_LOG T
+		where T.createDate &gt; date(date_sub(now(), interval 1 day)) and  T.createDate &lt;=date_sub(now(), interval 1 day)  AND TYPE = 1
+	</select>
+	<select id="getYestodayNowUserCount" resultType="int">
+		 select count(distinct T.VISITOR) as USER_COUNT
+		from S_BEHAVIOR_LOG T
+		where T.createDate &gt; date(date_sub(now(), interval 1 day)) and  T.createDate &lt;= date_sub(now(), interval 1 day)  AND TYPE = 1
+	</select>
+	
+	<select id="getAverageViewCount" resultType="int">
+		select ceil((select count(1) from S_BEHAVIOR_LOG WHERE TYPE = 1)/(select count(distinct T.createDate)
+  		from (select date_format(T.createDate, '%Y-%m-%d') as createDate
+        from S_BEHAVIOR_LOG T WHERE T.TYPE = 1) T)) as VIEW_COUNT from dual
+	</select>
+	<select id="getAverageIpCount" resultType="int">
+		 select ceil((select count(distinct ACCESSIP) from S_BEHAVIOR_LOG WHERE TYPE = 1)/(select count(distinct T.createDate)
+  		from (select date_format(T.createDate, '%Y-%m-%d') as createDate
+        from S_BEHAVIOR_LOG T WHERE T.TYPE = 1) T)) as VIEW_COUNT from dual
+	</select>
+	<select id="getAverageUserCount" resultType="int">
+		 select ceil((select count(distinct VISITOR) from S_BEHAVIOR_LOG WHERE TYPE = 1)/(select count(distinct T.createDate)
+  		from (select date_format(T.createDate, '%Y-%m-%d') as createDate
+        from S_BEHAVIOR_LOG T WHERE T.TYPE = 1) T)) as VIEW_COUNT from dual
+	</select>
+	
+	
+	<select id="getTopViewCount" resultType="int">
+		 select max(T.II_COUNT) AS VIEW_COUNT
+  		from (select count(*) AS II_COUNT
+          from S_BEHAVIOR_LOG T  WHERE T.TYPE = 1
+         group by date_format(T.createDate, '%Y-%m-%d')) t
+	</select>
+	
+	<select id="getTopIpCount" resultType="int">
+		select max(T.II_COUNT) AS IP_COUNT
+  		from (select count(distinct T.ACCESSIP) AS II_COUNT
+          from S_BEHAVIOR_LOG T WHERE T.TYPE = 1
+         group by date_format(T.createDate, '%Y-%m-%d')) t
+	</select>
+	<select id="getTopUserCount" resultType="int">
+		select max(T.II_COUNT) AS User_COUNT
+  		from (select count(distinct VISITOR) AS II_COUNT
+          from S_BEHAVIOR_LOG T WHERE T.TYPE = 1
+         group by date_format(T.createDate, '%Y-%m-%d')) t
+	</select>
+	<select id="getTodayHourViewCount" resultType="java.util.Map">
+			SELECT cast (date_format(createDate,'%H') as unsigned int) AS HH,count(1) as COUNT
+			FROM S_BEHAVIOR_LOG
+			WHERE date_format(createDate,'%Y-%m-%d')=date_format(now(),'%Y-%m-%d') AND TYPE = 1
+			GROUP BY date_format(createDate,'%H')
+			order by cast(date_format(createDate,'%H') as unsigned int)
+	</select>
+	<select id="getYestodayHourViewCount" resultType="java.util.Map">
+		SELECT  cast(date_format(createDate,'%H') as unsigned int) AS HH,count(1) as COUNT
+		FROM S_BEHAVIOR_LOG
+		WHERE date_format(createDate,'%Y-%m-%d')=date_format(date_sub(now(), interval 1 day),'%Y-%m-%d') AND TYPE = 1
+		GROUP BY date_format(createDate,'%H')
+		order by cast(date_format(createDate,'%H') as unsigned int)
+	</select>
+	<select id="getLastWeekHourViewCount" resultType="java.util.Map">
+		SELECT  cast(date_format(createDate,'%H') as unsigned int) AS HH,count(1) as COUNT
+		FROM S_BEHAVIOR_LOG
+		WHERE date_format(createDate,'%Y-%m-%d')=date_format(date_sub(now(), interval 1 day),'%Y-%m-%d') AND TYPE = 1
+		GROUP BY date_format(createDate,'%H')
+		order by cast(date_format(createDate,'%H') as unsigned int)
+	</select>
+
+	<select id="getIpCount" resultType="int">
+		SELECT COUNT(1) AS IP_COUNT FROM (select
+	    count(ACCESSIP)
+	    from (SELECT SIGN_STR,ACCESSIP FROM S_BEHAVIOR_LOG WHERE SIGN_STR LIKE #{signStr}||'%')
+	    where
+	    ACCESSIP is not null AND TYPE = 1
+	    GROUP BY ACCESSIP)
+	</select>
+	
+	<select id="getPVCount" resultType="int">
+		SELECT COUNT(1) AS COUNT FROM S_BEHAVIOR_LOG WHERE SIGN_STR LIKE  #{signStr}||'%'  AND TYPE = 1
+	</select>
+	
+	<select id="getUVCount" resultType="int">
+	  SELECT COUNT(1) AS COOKIES_COUNT FROM (select
+      count(COOKIES)
+      from (SELECT SIGN_STR,COOKIES FROM S_BEHAVIOR_LOG WHERE SIGN_STR LIKE #{signStr}||'%'  AND TYPE = 1)
+      where
+      COOKIES is not null  AND TYPE = 1
+      GROUP BY COOKIES)
+	</select>
+	
+	<select id="getPageView" resultType="java.util.Map">
+		SELECT T.* FROM
+		(SELECT ACCESSURL URL, 
+		COUNT(1) VIEWCOUNT, COUNT(DISTINCT VISITOR) VISITORCOUNT
+        FROM S_BEHAVIOR_LOG 
+        WHERE VISITOR IS NOT NULL AND TYPE=1
+        GROUP BY ACCESSURL) T 
+        ORDER BY T.VIEWCOUNT DESC LIMIT ${from}, ${size}
+	</select>
+
+	<select id="getPageViewCount" resultType="int">
+		SELECT COUNT(1) FROM
+		(SELECT ACCESSURL URL, 
+		COUNT(1) VIEWCOUNT, COUNT(DISTINCT VISITOR) VISITORCOUNT
+        FROM S_BEHAVIOR_LOG 
+        WHERE VISITOR IS NOT NULL AND TYPE=1
+        GROUP BY ACCESSURL) T
+	</select>
+	
+	<select id="getTViewCount" resultType="java.util.Map">
+		select * from (select '今日' as name, count(*) as viewCount, count(distinct(a.VISITOR)) as userCount, count(distinct(a.ACCESSIP)) as ipCount, 1 as ordernum
+		  from S_BEHAVIOR_LOG a
+		 where a.data_flag = '1'  and date_format(a.createDate, '%Y-%m-%d') = date_format(now(), '%Y-%m-%d')
+		union
+		select '昨日' as name, count(*) as viewCount, count(distinct(a.VISITOR)) as userCount, count(distinct(a.ACCESSIP)) as ipCount, 2 as ordernum
+		  from S_BEHAVIOR_LOG a
+		 where a.data_flag = '1'  and date_format(a.createDate, '%Y-%m-%d') = date_format(date_sub(now(), interval 1 day), '%Y-%m-%d')
+		union
+		select '昨日此时' as name, count(*) as viewCount, count(distinct(a.VISITOR)) as userCount, count(distinct(a.ACCESSIP)) as ipCount, 3 as ordernum
+		  from S_BEHAVIOR_LOG a
+		 where a.data_flag = '1' and a.createDate between to_date(date_format(date_sub(now(), interval 1 day),'%Y-%m-%d')||' 00:00:01','yyyy-MM-dd HH24:mi:ss') and sysdate-1
+		union
+		select '每日平均' as name, ceil(count(*)/count(distinct(date_format(a.createDate,'%Y-%m-%d')))) as viewCount, ceil(count(distinct(a.VISITOR))/count(distinct(date_format(a.createDate,'%Y-%m-%d')))) as userCount, ceil(count(distinct(a.ACCESSIP))/count(distinct(date_format(a.createDate,'%Y-%m-%d')))) as ipCount,4 as ordernum
+		  from S_BEHAVIOR_LOG a
+		 where a.data_flag = '1'
+		union
+		select '历史峰值' as name, max(c.viewCount) as viewCount, max(c.userCount) as userCount, max(c.ipCount) as ip, 5 as ordernum
+		  from (select b.cdate,
+		               count(b.id) as viewCount,
+		               count(distinct(b.VISITOR)) as userCount,
+		               count(distinct(b.ACCESSIP)) as ipCount
+		          from (select a.id,
+		                       a.ACCESSIP,
+		                       a.VISITOR,
+		                       date_format(a.createDate, '%Y-%m-%d') as cdate
+		                  from S_BEHAVIOR_LOG a
+		                  where a.data_flag = '1') b
+		         group by b.cdate) c
+		) d order by d.ordernum
+	</select>
+
+	<select id="getSystemCount" resultType="java.util.Map">
+		SELECT ${name} NAME, COUNT(1) VIEWCOUNT, 
+			COUNT(DISTINCT VISITOR) VISITORCOUNT, COUNT(DISTINCT ACCESSIP) IPCOUNT, ROUND(AVG(ACCESSTIME),0) AVGTIME
+	    FROM S_BEHAVIOR_LOG
+	    WHERE ${name} IS NOT NULL AND VISITOR IS NOT NULL AND ACCESSIP IS NOT NULL AND TYPE=1
+	    GROUP BY ${name}
+	    ORDER BY VIEWCOUNT DESC
+	</select>
+	
+	<select id="getVisitPageCount" resultType="java.util.Map">
+		SELECT IFNULL(T.NAME,'当前汇总') NAME, COUNT(T.N) VIEWCOUNT
+	    FROM (
+	      SELECT COUNT(1) N, 
+	      	(CASE WHEN  COUNT(1) &gt;= 1 AND COUNT(1) &lt; 10 THEN '1-10页' 
+			WHEN COUNT(1) &gt;= 10 AND COUNT(1) &lt; 50 THEN '10-50页' 
+			WHEN COUNT(1) &gt;= 50 AND COUNT(1) &lt; 100 THEN '50-100页' 
+			ELSE '100页及以上' END) NAME
+	      FROM S_BEHAVIOR_LOG
+	      WHERE VISITOR IS NOT NULL AND TYPE=1
+	      GROUP BY date_format(ACCESSTIMEIN,'%Y-%m-%d'), VISITOR
+		  ORDER BY NAME
+	    ) T
+	    GROUP BY T.NAME WITH ROLLUP
+	</select>
+
+	<select id="getVisitTimeCount" resultType="java.util.Map">
+		SELECT IFNULL(T.NAME,'当前汇总') NAME, COUNT(T.N) VIEWCOUNT
+	    FROM (
+	        SELECT FLOOR(SUM(ACCESSTIME)/1000) N, 
+               (CASE WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 0 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 10 THEN '0-10秒' 
+               WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 10 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 30 THEN '10-30秒' 
+               WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 30 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 60 THEN '30秒-1分钟' 
+               WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 60 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 180 THEN '1分钟-3分钟' 
+               WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 180 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 600 THEN '3分钟-10分钟' 
+               WHEN FLOOR(SUM(ACCESSTIME)/1000) &gt;= 600 AND FLOOR(SUM(ACCESSTIME)/1000) &lt; 1800 THEN '10分钟-30分钟'
+               ELSE '30分钟及以上' END) NAME
+	        FROM S_BEHAVIOR_LOG
+      		WHERE VISITOR IS NOT NULL AND TYPE=1
+	        GROUP BY date_format(ACCESSTIMEIN,'%Y-%m-%d'),VISITOR
+	    ) T
+      	GROUP BY T.NAME WITH ROLLUP
+	</select>
+	<!--select id="getCityCountTop" pageable="true" resultType="java.util.Map">
+		select T.* from
+		(select
+		count(ACCESS_CITY) as CITY_COUNT,ACCESS_CITY
+		from S_BEHAVIOR_LOG
+		where
+		ACCESS_CITY is not null and cookies is not null
+		GROUP BY ACCESS_CITY) T
+        <filter open="where (" close=")" />
+        ORDER BY T.CITY_COUNT DESC
+	</select>
+	<select id="getCityCountTopCount" resultType="int">
+		select count(1) from
+		(select
+		count(ACCESS_CITY) as CITY_COUNT,ACCESS_CITY
+		from S_BEHAVIOR_LOG
+		where
+		ACCESS_CITY is not null and cookies is not null
+		GROUP BY ACCESS_CITY) T
+        <filter open="where (" close=")" />
+	</select>
+	
+	<select id="getquery" resultType="java.util.Map">
+		select *from (
+		select query,count(query) as count from (
+		select query from (
+		select substr (access_query,4,case when instr(access_query,'&amp;')>2 then instr(access_query,'&amp;')-4 else length(access_query) end) query 
+		from S_BEHAVIOR_LOG u where sign_str = 'homesearch' and cookies=#{cookiename}))
+		WHERE query != 'NONE'
+		group by query 
+		order by count desc) t
+		where rownum &lt;=10
+		<filter open="and (" close=")" />
+	</select>
+	
+	<select id="getpublicquery" resultType="java.util.Map">
+		select *from (
+		select query,count(query) as count from (
+		select query from (
+		select substr (access_query,4,case when instr(access_query,'&amp;')>2 then instr(access_query,'&amp;')-4 else length(access_query) end) query 
+		from S_BEHAVIOR_LOG u 
+		where sign_str = 'homesearch'))
+		WHERE query != 'NONE'
+		group by query 
+		order by count desc) t
+		where rownum &lt;=10
+		<filter open="and (" close=")" />
+	</select-->
+	
+	<select id="getkeywords" resultType="java.util.Map">
+	    select * from(
+	    select query,count(query) as count from (
+	    select query from (
+	    select substr (access_query,4,case when instr(access_query,'&amp;')>2 then instr(access_query,'&amp;')-4 else length(access_query) end) query 
+	    from S_BEHAVIOR_LOG t 
+	    where t.sign_str = 'homesearch' and t.access_cname = #{cname}))
+	    WHERE query != 'NONE'
+	    group by query 
+	    order by count desc)
+	    where rownum &lt;=#{num} 
+	</select>
+	
+	<select id="getkeywordsall" resultType="java.util.Map">
+	    select * from(
+	    select query,count(query) as count from (
+	    select query from (
+	    select substr (access_query,4,case when instr(access_query,'&amp;')>2 then instr(access_query,'&amp;')-4 else length(access_query) end) query 
+	    from S_BEHAVIOR_LOG t 
+	    where t.sign_str = 'homesearch'))
+	    WHERE query != 'NONE'
+	    group by query 
+	    order by count desc)
+	    where rownum &lt;=#{num} order by count asc
+	</select>
+	
+	<select id="getCityWord" resultType="java.util.Map">
+		SELECT access_cname "name", listagg(str,',') within GROUP (order BY str) "words"
+		FROM (
+		  SELECT rn,access_cname,str
+		  FROM (
+		          SELECT row_number() OVER(PARTITION BY access_cname ORDER BY dbms_random.random()) rn,  access_cname, str
+		          FROM (
+		               SELECT access_cname,substr(access_query, 4, (DECODE(INSTR(access_query,'&amp;', 1, 1),0,LENGTH(access_query)+1,INSTR(access_query,'&amp;', 1, 1))-4)) str 
+		               from S_BEHAVIOR_LOG t 
+		               WHERE sign_str = 'homesearch' 
+		          )
+		          WHERE str != 'NONE'
+		          GROUP BY access_cname, str
+		   )
+		   WHERE rn &lt;=5
+		)
+		GROUP BY access_cname
+	</select>
+	
+	<select id="singleKeywords" resultType="java.util.Map">
+		select m.keywords, m.name
+		from t_metadata m
+		inner join (select t.subscribe_id as id
+           from t_user_subscribe t
+           inner join (select *
+                       from t_user u
+		 <if test="name == null">
+          	where RESERVE1 = #{id} or ORGANIZATION_CODE = #{id}
+         </if>
+         <if test="id == null">
+          	where COMPANY_NAME = #{name} or USER_NAME = #{name}
+         </if>
+		 <if test="name != null and id != null">
+          	where COMPANY_NAME = #{name} or USER_NAME = #{name}
+           	or RESERVE1 = #{id} or ORGANIZATION_CODE = #{id}
+         </if>) l
+             on user_id = l.id) s
+    	on m.id = s.id
+	</select>
+</mapper>
