@@ -57,6 +57,13 @@ const mutations = {
 const actions = {
   generateAsyncRoutes({ commit }, routes) {
     return new Promise(resolve => {
+      const dashboard = routes[0].children.find((c)=>{
+        return c.url === 'dashboard'
+      })
+      if(!dashboard){
+        routes[0].children.unshift({id:'dashboard', url: '/dashboard', name: 'Dashboard'})
+      }
+
       commit('SET_ROUTES', routes)
       const menus = filterMenus(routes)
       const accessedRoutes = filterAsyncRoutes(asyncRoutes, '', menus)

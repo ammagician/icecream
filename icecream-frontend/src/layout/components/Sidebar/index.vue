@@ -85,7 +85,7 @@ export default {
     activeMenu() {
       const route = this.$route
       const { query } = route
-      return query.index
+      return query.index || 'dashboard'
     },
     showLogo() {
       return this.$store.state.settings.sidebarLogo

@@ -44,9 +44,24 @@ export const constantRoutes = [
   },
 
   {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Layout,
+    children: [
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard'),
+        meta: { title: 'Dashboard', icon: 'tree' }
+      }
+    ]
+
+  },
+
+  {
     path: '/',
     component: Layout,
-    redirect: '/sys/tenant' 
+    redirect: '/dashboard'
   },
 
   // 404 page must be placed at the end !!!
@@ -101,13 +116,13 @@ export const asyncRoutes = [
         path: 'menu',
         name: 'Menu',
         component: () => import('@/views/system/menu/index'),
-        meta: { title: 'Menu', icon: 'tree' } 
+        meta: { title: 'Menu', icon: 'tree' }
       },
       {
         path: 'tenant',
         name: 'Tenant',
         component: () => import('@/views/system/tenant/index'),
-        meta: { title: 'Tenant', icon: 'tree' } 
+        meta: { title: 'Tenant', icon: 'tree' }
       }
     ]
   },
@@ -131,7 +146,7 @@ export const asyncRoutes = [
         path: '',
         name: 'test',
         component: () => import('@/views/test'),
-        meta: { title: 'Test', icon: 'tree' } 
+        meta: { title: 'Test', icon: 'tree' }
       }
     ]
   }
