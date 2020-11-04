@@ -3,6 +3,7 @@ package com.apang.icecream.systemmanager.controller;
 
 import com.apang.icecream.core.services.ITenantService;
 import com.apang.icecream.core.domain.bo.Tenant;
+import com.apang.icecream.core.util.ListUtil;
 import com.apang.icecream.systemmanager.domain.vo.TenantVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -101,9 +102,7 @@ public class TenantController {
 	@ResponseBody
 	@LoggerManage(module = "租户管理", description = "", operate = "删除租户")
 	public HttpResult del(@RequestParam("ids") String ids) {
-
-		String[] arr = ids.split(",");
-		List<String> list = Arrays.asList(arr);
+		List<String> list = ListUtil.splitToList(ids, ",");
 		boolean success = tenantService.removeByIds(list);
 
 		HttpResult result = HttpResult.ok();

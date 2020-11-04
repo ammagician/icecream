@@ -10,6 +10,7 @@ import com.apang.icecream.core.domain.bo.User;
 import com.apang.icecream.core.services.IOrgService;
 import com.apang.icecream.core.domain.bo.Org;
 import com.apang.icecream.core.services.IUserService;
+import com.apang.icecream.core.util.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,6 @@ public class OrgController {
 	@RequestMapping(value = "/org/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public HttpResult getById(@RequestParam("id") String id) {
-
 		Org org = orgService.getById(id);
 		HttpResult result = HttpResult.ok();
 		result.setData(org);
@@ -101,8 +101,7 @@ public class OrgController {
 	@LoggerManage(module = "组织管理", description = "", operate = "删除组织")
 	public HttpResult del(@RequestParam("ids") String ids) {
 		HttpResult result;
-		String[] arr = ids.split(",");
-		List<String> list = Arrays.asList(arr);
+		List<String> list = ListUtil.splitToList(ids, ",");
 
 		QueryWrapper<Org> orgQueryWrapper = new QueryWrapper<Org>();
 		orgQueryWrapper.in("parentId", list);

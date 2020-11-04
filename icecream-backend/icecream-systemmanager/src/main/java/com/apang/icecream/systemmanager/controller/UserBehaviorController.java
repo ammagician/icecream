@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * 保存用户行为信息
+ * 用户行为分析
  *
  * @author andy.pang
  * @since 2019-09-06

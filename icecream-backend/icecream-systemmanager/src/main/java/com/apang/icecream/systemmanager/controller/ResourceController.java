@@ -13,6 +13,7 @@ import com.apang.icecream.auth.utils.AuthenticationUtil;
 import com.apang.icecream.core.domain.bo.Resource;
 import com.apang.icecream.core.services.IResourceService;
 import com.apang.icecream.core.services.ITenantService;
+import com.apang.icecream.core.util.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +54,6 @@ public class ResourceController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/resource", method = RequestMethod.GET)
 	@ResponseBody
-
-
 	public HttpResult getById(@RequestParam("id") String id) {
 		Resource resources = resourcesService.getById(id);
 		HttpResult result = HttpResult.ok();
@@ -121,8 +120,7 @@ public class ResourceController {
 	}
 
 	private HttpResult del(String ids) {
-		String[] arr = ids.split(",");
-		List<String> list = Arrays.asList(arr);
+		List<String> list = ListUtil.splitToList(ids, ",");
 		boolean success = resourcesService.removeByIds(list);
 		HttpResult result = HttpResult.ok();
 		result.setSuccess(success);
@@ -156,24 +154,6 @@ public class ResourceController {
 		return new ArrayList<Resource>(hash.values());
 	}
 
-	private List<Resource> listToTree(List<Resource> list) {
-		List<Resource> result = new ArrayList<Resource>();
-		Map<String, Resource> hash = list.stream().collect(Collectors.toMap(r-> r.getId(), r -> r));
-		for(Resource r : list) {
-			Resource p = hash.get(r.getParentId());
-			if(p == null) {
-				result.add(r);
-			}else {
-				if (p.getChildren() == null) {
-					p.setChildren(new ArrayList<Resource>());
-				}
-				p.getChildren().add(r);
-			}
-		}
-		
-		return result;
-	}
-
 	@ApiOperation(value = "查询门户菜单", notes = "门户菜单")
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/menu/tree", method = RequestMethod.GET)
@@ -186,7 +166,7 @@ public class ResourceController {
 		queryWrapper.in("TYPE", 3, 4);
 
 		List<Resource> list = resourcesService.list(queryWrapper);
-		List<Resource> data = listToTree(list);
+		List<Resource> data = ListUtil.listToTree(list);
 		HttpResult result = HttpResult.ok();
 		result.setData(data);
 		return result;
@@ -203,11 +183,11 @@ public class ResourceController {
 		}
 		queryWrapper.in("TYPE", 3, 4);
 		List<Resource> list = resourcesService.list(queryWrapper);
-		List<Resource> data = listToTree(list);
+		List<Resource> data = ListUtil.listToTree(list);
 
 		List<String> ids = new ArrayList<String>();
 		Map<String, List<Resource>> hash = new HashMap<String, List<Resource>>();
-
+		// 根据relationId找到页面
 		for (Resource r : list) {
 			String rId = r.getRelationId();
 			if (r.getType() == 4 && !StringUtils.isEmpty(rId)) {
@@ -349,7 +329,7 @@ public class ResourceController {
 		return del(ids);
 	}
 
-	@ApiOperation(value = "查询分组Portlet", notes = "查询分组Portlet")
+	@ApiOperation(value = "查询分组Portlet, 按照portal分组", notes = "查询分组Portlet")
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/portlet/group", method = RequestMethod.GET)
 	@ResponseBody
@@ -411,7 +391,8 @@ public class ResourceController {
 		return del(ids);
 	}
 
-	@ApiOperation(value = "查询分组Page", notes = "查询分组Page")
+
+	@ApiOperation(value = "查询分组Page,按照portal分组", notes = "查询分组Page")
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/page/group", method = RequestMethod.GET)
 	@ResponseBody
@@ -471,10 +452,10 @@ public class ResourceController {
 	@ResponseBody
 	@LoggerManage(module = "Page管理", description = "", operate = "删除Page")
 	public HttpResult delPage(@RequestParam("ids") String ids) {
-		String[] arr = ids.split(",");
-		List<String> list = Arrays.asList(arr);
+		List<String> list = ListUtil.splitToList(ids, ",");
 		QueryWrapper<Resource> wrapper = new QueryWrapper<Resource>();
 		wrapper.in("PARENTID", list);
+		//先删除按钮
 		if (resourcesService.remove(wrapper)) {
 			return del(ids);
 		}
@@ -489,9 +470,9 @@ public class ResourceController {
 		Resource res = new Resource();
 		res.setParentId(page);
 		res.setType(6);
-		List<Resource> resourcess = resourcesService.getList(getBaseQueryWrapper(res));
+		List<Resource> buttons = resourcesService.getList(getBaseQueryWrapper(res));
 		HttpResult result = HttpResult.ok();
-		result.setData(resourcess);
+		result.setData(buttons);
 		return result;
 	}
 

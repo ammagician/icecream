@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.apang.icecream.core.domain.bo.User;
 import com.apang.icecream.core.services.IUserService;
+import com.apang.icecream.core.util.ListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -83,20 +84,7 @@ public class UserController {
 	@RequestMapping(value = "/user/list", method = RequestMethod.POST)
 	@ResponseBody
 	public HttpResult getList(User user) {
-		QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
-		if (!StringUtils.isEmpty(user.getUserName())) {
-			queryWrapper.like("userName", user.getUserName());
-		}
-
-		if (!StringUtils.isEmpty(user.getOrgId())) {
-			queryWrapper.eq("orgId", user.getOrgId());
-		}
-
-		if (user.getIsDisabled() != null) {
-			queryWrapper.eq("isDisabled", user.getIsDisabled());
-		}
-
-		queryWrapper.eq("tenantId", AuthenticationUtil.getTenantId());
+		QueryWrapper<User> queryWrapper = buildUserQueryWrapper(user);
 
 		List<User> users = userService.getList(queryWrapper);
 		HttpResult result = HttpResult.ok();
@@ -110,20 +98,7 @@ public class UserController {
 	@ResponseBody
 	public HttpResult getPage(int current, int size, User user) {
 		Page<User> page = new Page<User>(current, size);
-		QueryWrapper<User> queryWrapper = new QueryWrapper<User>(user);
-		if (!StringUtils.isEmpty(user.getUserName())) {
-			queryWrapper.like("userName", user.getUserName());
-		}
-
-		if (!StringUtils.isEmpty(user.getOrgId())) {
-			queryWrapper.like("orgId", user.getOrgId());
-		}
-
-		if (user.getIsDisabled() != null) {
-			queryWrapper.eq("isDisabled", user.getIsDisabled());
-		}
-
-		queryWrapper.eq("tenantId", AuthenticationUtil.getTenantId());
+		QueryWrapper<User> queryWrapper = buildUserQueryWrapper(user);
 
 		IPage<User> users = userService.getPage(page, queryWrapper);
 
@@ -222,9 +197,7 @@ public class UserController {
 	@ResponseBody
 	@LoggerManage(module = "用户管理", description = "", operate = "删除用户")
 	public HttpResult del(@RequestParam("ids") String ids) {
-
-		String[] arr = ids.split(",");
-		List<String> list = Arrays.asList(arr);
+		List<String> list = ListUtil.splitToList(ids, ",");
 		boolean success = userService.removeByIds(list);
 
 		HttpResult result = HttpResult.ok();
@@ -233,4 +206,21 @@ public class UserController {
 		return result;
 	}
 
+	private QueryWrapper<User> buildUserQueryWrapper(User user) {
+		QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
+		if (!StringUtils.isEmpty(user.getUserName())) {
+			queryWrapper.like("userName", user.getUserName());
+		}
+
+		if (!StringUtils.isEmpty(user.getOrgId())) {
+			queryWrapper.eq("orgId", user.getOrgId());
+		}
+
+		if (user.getIsDisabled() != null) {
+			queryWrapper.eq("isDisabled", user.getIsDisabled());
+		}
+
+		queryWrapper.eq("tenantId", AuthenticationUtil.getTenantId());
+		return queryWrapper;
+	}
 }

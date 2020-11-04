@@ -1,7 +1,6 @@
 package com.apang.icecream.systemmanager.controller;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +9,7 @@ import com.apang.icecream.core.domain.bo.Permission;
 import com.apang.icecream.core.domain.bo.Role;
 import com.apang.icecream.core.services.IResourceService;
 import com.apang.icecream.core.services.IRoleService;
+import com.apang.icecream.core.util.ListUtil;
 import com.apang.icecream.systemmanager.domain.vo.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -52,7 +52,6 @@ public class RoleController {
 	@RequestMapping(value = "/role/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public HttpResult getById(@RequestParam("id") String id) {
-
 		Role role = roleService.getById(id);
 		HttpResult result = HttpResult.ok();
 		result.setData(role);
@@ -64,7 +63,7 @@ public class RoleController {
 	@RequestMapping(value = "/role/list", method = RequestMethod.GET)
 	@ResponseBody
 	public HttpResult getList(Role role) {
-		QueryWrapper<Role> wrapper = getBaseQueryWrapper(role);
+		QueryWrapper<Role> wrapper = buildBaseQueryWrapper(role);
 		List<Role> roles = roleService.getList(wrapper);
 		HttpResult result = HttpResult.ok();
 		result.setData(roles);
@@ -77,7 +76,7 @@ public class RoleController {
 	@ResponseBody
 	public HttpResult getPage(int current, int size, Role role) {
 		Page<Role> page = new Page<Role>(current, size);
-		QueryWrapper<Role> wrapper = getBaseQueryWrapper(role);
+		QueryWrapper<Role> wrapper = buildBaseQueryWrapper(role);
 
 		IPage<Role> roles = roleService.getPage(page, wrapper);
 
@@ -121,17 +120,13 @@ public class RoleController {
 		return result;
 	}
 
-
-
 	@ApiOperation(value = "根据ID删除角色", notes = "逗号分隔")
 	@ApiResponses({ @ApiResponse(code = 200, message = "删除成功") })
 	@RequestMapping(value = "/role/del", method = RequestMethod.DELETE)
 	@ResponseBody
 	@LoggerManage(module = "角色管理", description = "", operate = "删除角色")
 	public HttpResult del(@RequestParam("ids") String ids) {
-
-		String[] arr = ids.split(",");
-		List<String> string = Arrays.asList(arr);
+		List<String> string = ListUtil.splitToList(ids, ",");
 		boolean success = roleService.removeByIds(string);
 
 		HttpResult result = HttpResult.ok();
@@ -168,7 +163,7 @@ public class RoleController {
 		return result;
 	}
 
-	private QueryWrapper<Role> getBaseQueryWrapper(Role role) {
+	private QueryWrapper<Role> buildBaseQueryWrapper(Role role) {
 		QueryWrapper<Role> wrapper = new QueryWrapper<Role>();
 		if (!StringUtils.isEmpty(role.getName())) {
 			wrapper.like("name", role.getName());
@@ -177,7 +172,6 @@ public class RoleController {
 		if (!StringUtils.isEmpty(role.getCode())) {
 			wrapper.like("code", role.getCode());
 		}
-
 
 		wrapper.like("tenantId", AuthenticationUtil.getTenantId());
 

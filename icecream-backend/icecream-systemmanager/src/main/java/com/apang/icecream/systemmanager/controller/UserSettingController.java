@@ -41,10 +41,6 @@ public class UserSettingController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/user/setting", method = RequestMethod.GET)
 	@ResponseBody
-	/**
-	 * 
-	 * @return 返回HttpResult
-	 */
 	public HttpResult getById() {
 		String id = AuthenticationUtil.getUserId();
 		HttpResult result = HttpResult.ok();
@@ -70,11 +66,6 @@ public class UserSettingController {
 	@RequestMapping(value = "/user/setting", method = RequestMethod.PUT)
 	@ResponseBody
 	@LoggerManage(module = "用户信息管理", description = "", operate = "更新用户个人设置")
-	/**
-	 * 
-	 * @param setting 用户设置UserSetting
-	 * @return HttpResult
-	 */
 	public HttpResult update(@RequestBody UserSetting setting) {
 		String userId = AuthenticationUtil.getUserId();
 		HttpResult result = HttpResult.ok();

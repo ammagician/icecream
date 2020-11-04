@@ -3,10 +3,7 @@ package com.apang.icecream.core.util;
 import com.apang.icecream.core.domain.bo.Menu;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ListUtil {
 
@@ -78,5 +75,10 @@ public class ListUtil {
 			}
 		}
 		return map;
+	}
+
+	public static List<String> splitToList(String str, String sp){
+		String[] arr = str.split(sp);
+		return Arrays.asList(arr);
 	}
 }

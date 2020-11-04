@@ -90,7 +90,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 			//创建角色,授权门户
 			Role role = new Role();
 			String roleId = UUID.randomUUID().toString();
-			String portalId = "1d2e030e-0a65-4239-bfae-1dace826e581";
+			String portalId = "1d2e030e-0a65-4239-bfae-1dace826e581";  //管理门户id
 			role.setId(roleId);
 			role.setName("管理员");
 			role.setCode("admin");

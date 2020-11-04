@@ -108,25 +108,25 @@ public class UserRoleDecisionVoter implements AccessDecisionVoter<Object> {
     private boolean accessGranted4Resource(String requestUrl) {
         final AuthUserDetailVO authUserDetailVO = AuthenticationUtil.getUser();
         if (null != authUserDetailVO && requestUrl.contains(AuthConstants.C_WET_PREFIX)) {
-            // 检查是否属于资源授权清单中的资源（按钮级别的资源.）
+            // 检查是否属于资源授权清单中的资源（按钮级别的资源.）,如果按钮资源配置了url则说明改URL是受控的
             Resource r = new Resource();
             r.setType(Integer.valueOf(AuthConstants.C_RESOURCE_TYPE));
             QueryWrapper queryWrapper = new QueryWrapper(r);
 
             final List<Resource> buttonResourceList =  resourceService.list(queryWrapper);
-            final Set<String> buttonResources  =   new HashSet<String>();
+            final Set<String> controlUrls  =   new HashSet<String>();
             for(Resource resource4Auth: buttonResourceList) {
                 if (null != resource4Auth.getUrl()) {
-                    buttonResources.add(resource4Auth.getUrl());
+                    controlUrls.add(resource4Auth.getUrl());
                 }
             }
-            if (!contain(buttonResources, requestUrl)) {
+            if (!contain(controlUrls, requestUrl)) {
                 return true;
             }
 
-            // 检查该资源对应的角色是否具有该资源的权限.
+            // 当前请求URL在受控范围，则检查间接授权的按钮是否被授权
             final User4AuthVO user4AuthVO = authUserDetailVO.getUser4AuthVO();
-            if (null != user4AuthVO && user4AuthVO.getLoginName().length() > 0) {
+            if (null != user4AuthVO && !StringUtils.isEmpty(user4AuthVO.getLoginName())) {
                 final Set<String> urlAuthorities = this.getGrantedURL(authUserDetailVO);
                 if (contain(urlAuthorities, requestUrl)) {
                     return true;
