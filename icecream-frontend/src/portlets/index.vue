@@ -1,6 +1,6 @@
 <template>
   <div class="portlet">
-    <h1 :class="classStr">{{ (data.title || data.name || '标题') + data.i }}<span class="portlet-close">X</span></h1>
+    <h1 :class="classStr">{{ data.title || data.name || '标题' }}<span class="portlet-close">X</span></h1>
     <div class="portlet-content">
       <component v-bind:is="data.name"></component>
     </div>

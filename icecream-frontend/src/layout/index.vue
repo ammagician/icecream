@@ -8,10 +8,10 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar />
+        <navbar @openSetting="openSetting" />
       </div>
       <app-main />
-      <right-panel v-if="showSettings">
+      <right-panel v-if="showSettings" ref="rightPanel">
         <settings />
       </right-panel>
     </div>
@@ -58,6 +58,9 @@ export default {
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    },
+    openSetting(){
+      this.$refs.rightPanel.openSetting()
     }
   }
 }

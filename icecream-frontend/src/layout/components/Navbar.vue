@@ -21,7 +21,9 @@
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
       </template>
-
+      <div class="handle-button" :style="{color: theme}" @click="openSetting" >
+        <i class="el-icon-setting" />
+      </div>
       <span class="username">{{userName}}</span>
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
@@ -47,7 +49,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <div v-for="p in portals" @click="changePortal(p.id)">
+          <div v-for="p in portals" @click="changePortal(p.id)" :key="p.id">
             <el-dropdown-item>{{p.name}}</el-dropdown-item>
           </div>
         </el-dropdown-menu>
@@ -104,6 +106,10 @@ export default {
     userName: function(){
       const user = this.$store.state.user;
       return user.name
+    },
+
+    theme() {
+      return this.$store.state.settings.theme
     }
   },
   methods: {
@@ -118,6 +124,10 @@ export default {
       const setting = {...this.$store.state.user.setting}
       setting.currentPortal = id;
       this.$store.dispatch('user/changePortal', setting)
+    },
+
+    openSetting(){
+      this.$emit("openSetting")
     }
   }
 }
@@ -157,6 +167,15 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+
+    .handle-button{
+      vertical-align: top;
+      padding-top: 4px;
+      padding-right: 10px;
+      display:inline-block;
+      cursor: pointer;
+      font-size: 20px
+    }
 
     .username{
       display: inline-block;

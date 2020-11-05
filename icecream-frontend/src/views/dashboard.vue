@@ -2,13 +2,16 @@
   <div class="icecream-dashboard">
     <grid-layout
       :layout.sync="layout"
-      :col-num="12"
+      :col-num="24"
       :row-height="30"
       :is-draggable="true"
       :is-resizable="true"
       :is-mirrored="false"
-      :vertical-compact="true"
-      :margin="[20, 20]"
+      :vertical-compact="false"
+      :autoSize="false"
+      :responsive="false"
+      :preventCollision="true"
+      :margin="[10, 10]"
       :use-css-transforms="true"
       style="height:100%;"
     >
@@ -22,12 +25,16 @@
             <Portlet :data="item" />
         </grid-item>
     </grid-layout>
-    <div v-if="false" class="icecream-dashboard-mask" @mousedown="addStart" @mouseup="addEnd" @mousemove="moveItem"></div>
+    <div v-show="showMask" class="icecream-dashboard-mask" @dragover.prevent="dragover" @drop="addItem"></div>
+    <portlet-selector @change="openSelector">
+
+    </portlet-selector>
   </div>
 </template>
 
 <script>
 import VueGridLayout from 'vue-grid-layout'
+import PortletSelector from '@/components/PortletSelector'
 import Portlet from '../portlets/index'
 
 var testLayout = [
@@ -39,63 +46,40 @@ export default {
   components: {
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
-    Portlet
+    Portlet,
+    PortletSelector
   },
   data: function(){
     return {
       layout: testLayout,
+      showMask:false,
       addFlag: false
     }
   },
   methods: {
-    addStart(e){
-      if(!this.addFlag){
-        this.addFlag = true
-        this.showProxy(e)
-      }
+    dragover(){
 
     },
-    addEnd(){
+    addEnd(e){
       if(this.addFlag){
-        this.hideProxy()
-        this.addItem()
+        this.addItem(e)
       }
       this.addFlag = false
     },
-    moveItem(e){
-      if(!this.addFlag){
-        return
-      }
-      var event = document.createEvent('MouseEvents')
-      event.initMouseEvent('mousemove', true, false, window, 0, e.screenX, e.screenY, e.clientX, e.clientY,
-                     e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, 0, null)
-      document.querySelector(".grid-item-proxy").dispatchEvent(event)
-    },
 
-    showProxy(e){
+    addItem(e){
+      var item=JSON.parse(e.dataTransfer.getData("dragItem"));
+      console.info(item)
       const rect = e.target.getBoundingClientRect()
-      const x = Math.floor((e.clientX-20) / (rect.width / 12))
-      const y = Math.floor((e.clientY-80) / (rect.height / 12))
-      const proxy = {"x":x,"y":y,"w":2,"h":2,local: true,i: 'proxy',name: 'Proxy', class:"grid-item-proxy"}
+      const columnWidth = (rect.width-25*10) / 24 + 10
+      const x = Math.floor((e.offsetX-10) / columnWidth)
+      const rowHeight = 30+10
+      const y = Math.floor((e.offsetY-10) / rowHeight)
+      const proxy = {"x":x,"y":y,"w":2,"h":2,local: true,i: item.id,name: item.url, class:"grid-item-proxy"}
       this.layout.push(proxy)
-
-      this.$nextTick(()=>{
-        var event = document.createEvent('MouseEvents')
-        event.initMouseEvent('mousedown', true, false, window, 0, e.screenX, e.screenY, e.clientX, e.clientY,
-                      e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, 0, null)
-        document.querySelector(".grid-item-proxy").dispatchEvent(event)
-      })
     },
-
-    hideProxy(){
-      const index = this.layout.findIndex(item=>{
-        return item.i === 'proxy'
-      })
-      this.layout.splice(index)
-    },
-
-    addItem(){
-
+    openSelector(show){
+      this.showMask = show
     }
   }
 }
@@ -103,7 +87,7 @@ export default {
 
 <style scoped>
 .icecream-dashboard{
-  height: 100%;
+  height: calc(100vh - 50px);
   position: relative;
 }
 .icecream-dashboard-mask{

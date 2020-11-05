@@ -2,7 +2,7 @@
   <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
-      <div class="handle-button" :style="{'top':buttonTop+'px','background-color':theme}" @click="show=!show">
+      <div class="handle-button" :style="{'top':buttonTop+'px','background-color':theme}" @click="openSetting" v-if="show">
         <i :class="show?'el-icon-close':'el-icon-setting'" />
       </div>
       <div class="rightPanel-items">
@@ -61,6 +61,10 @@ export default {
       window.addEventListener('click', this.closeSidebar)
     },
     closeSidebar(evt) {
+      if(evt.target.parentNode.className === 'handle-button'){
+        return
+      }
+
       const parent = evt.target.closest('.rightPanel')
       if (!parent) {
         this.show = false
@@ -71,6 +75,10 @@ export default {
       const elx = this.$refs.rightPanel
       const body = document.querySelector('body')
       body.insertBefore(elx, body.firstChild)
+    },
+
+    openSetting(){
+      this.show = !this.show
     }
   }
 }
