@@ -55,6 +55,11 @@
           {{ scope.row.code }}
         </template>
       </el-table-column>
+      <el-table-column align="center" label="URL" width="220">
+        <template slot-scope="scope">
+          {{ scope.row.url }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="所属门户" width="220">
         <template slot-scope="scope">
           {{ scope.row.portalName }}
@@ -108,6 +113,9 @@
         </el-form-item>
         <el-form-item label="编码" prop="code">
           <el-input v-model="portlet.code" placeholder="portlet.xx" />
+        </el-form-item>
+        <el-form-item label="URL" prop="url">
+          <el-input v-model="portlet.url" placeholder="Test" />
         </el-form-item>
         <el-form-item label="所属门户">
           <el-select
