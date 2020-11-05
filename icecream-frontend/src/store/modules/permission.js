@@ -58,7 +58,7 @@ const actions = {
   generateAsyncRoutes({ commit }, routes) {
     return new Promise(resolve => {
       const dashboard = routes[0].children.find((c)=>{
-        return c.url === 'dashboard'
+        return c.id === 'dashboard'
       })
       if(!dashboard){
         routes[0].children.unshift({id:'dashboard', url: '/dashboard', name: 'Dashboard'})
