@@ -38,13 +38,13 @@ export default {
               icon: 'table',
               title: 'table2',
               id: 'table2',
-              path: '/example2/table'
+              url: '/example2/table'
             },
             {
               icon: 'tree',
               title: 'tree2',
               id: 'tree2',
-              path: '/example2/tree'
+              url: '/example2/tree'
             },
             {
               icon: 'form',
@@ -60,13 +60,13 @@ export default {
           icon: 'tree',
           title: 'tree',
           id: 'tree',
-          path: '/example/tree'
+          url: '/example/tree'
         },
         {
           icon: 'table',
           title: 'table',
           id: 'table',
-          path: 'https://www.baidu.com'
+          url: 'https://www.baidu.com'
         },
         {
           icon: 'form',

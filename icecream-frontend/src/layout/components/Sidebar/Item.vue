@@ -17,7 +17,11 @@ export default {
     const vnodes = []
 
     if (icon) {
-      vnodes.push(<svg-icon icon-class={icon}/>)
+      if(icon.startsWith("el-icon")){
+        vnodes.push(<i class={icon}></i>)
+      }else{
+        vnodes.push(<svg-icon icon-class={icon}/>)
+      }
     }
 
     if (title) {

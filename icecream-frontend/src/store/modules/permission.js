@@ -61,7 +61,7 @@ const actions = {
         return c.id === 'dashboard'
       })
       if(!dashboard){
-        routes[0].children.unshift({id:'dashboard', url: '/dashboard', name: 'Dashboard'})
+        routes[0].children.unshift({id:'dashboard', url: '/dashboard', name: 'Dashboard', icon: 'dashboard'})
       }
 
       commit('SET_ROUTES', routes)
