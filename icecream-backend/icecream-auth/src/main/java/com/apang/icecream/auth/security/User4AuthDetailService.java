@@ -4,11 +4,11 @@ package com.apang.icecream.auth.security;
 import java.util.*;
 
 import com.apang.icecream.core.domain.bo.*;
-import com.apang.icecream.core.services.IPermissionService;
 import com.apang.icecream.core.services.IResourceService;
 import com.apang.icecream.core.services.ITenantService;
 import com.apang.icecream.core.services.IUserService;
 import com.apang.icecream.core.util.ListUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +57,8 @@ public class User4AuthDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final long startTime = System.currentTimeMillis();
-        // 认证用户
-
         String[] arr = username.split("::::");
-
-        final User user = userService.findByLoginNameAndTenantId(arr[1], arr[0]);
+        final User user = userService.findByLoginNameAndTenantId(arr[1], Integer.parseInt(arr[0]));
         if (null == user) {
             final String message = "该用户名不存在，请检查。";
             throw new UsernameNotFoundException(message);
@@ -75,7 +72,7 @@ public class User4AuthDetailService implements UserDetailsService {
         final List<GrantedAuthority> grantedRoleList =new ArrayList <GrantedAuthority> ();
         final Set<Resource> resourceSet = new HashSet<Resource>();
         for (Role role : roleList) {
-            grantedRoleList.add(new SimpleGrantedAuthority(role.getId()));
+            grantedRoleList.add(new SimpleGrantedAuthority(role.getId().toString()));
         }
 
         resourceSet.addAll(resourceService.getGrantResources(user.getId()));
@@ -89,17 +86,17 @@ public class User4AuthDetailService implements UserDetailsService {
                 pp.setName(r.getName());
                 portalList.add(pp);
             }else{
-                Set<Resource> resources = portalResource.get(r.getPortalId());
+                Set<Resource> resources = portalResource.get(r.getPortalId().toString());
                 if(resources == null){
                     resources = new HashSet<Resource>();
-                    portalResource.put(r.getPortalId(), resources);
+                    portalResource.put(r.getPortalId().toString(), resources);
                 }
                 resources.add(r);
             }
         }
 
         for (Portal portal : portalList) {
-            Set<Resource> resources = portalResource.get(portal.getId());
+            Set<Resource> resources = portalResource.get(portal.getId().toString());
 
             List<Portlet> portletList = new ArrayList<Portlet>();
             List<Menu> menuList = new ArrayList<Menu>();

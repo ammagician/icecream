@@ -38,7 +38,7 @@ public class TenantController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/tenant/detail", method = RequestMethod.GET)
 	@ResponseBody
-	public HttpResult getById(@RequestParam("id") String id) {
+	public HttpResult getById(@RequestParam("id") int id) {
 		Tenant tenant = tenantService.getDetailById(id);
 		HttpResult result = HttpResult.ok();
 		result.setData(tenant);

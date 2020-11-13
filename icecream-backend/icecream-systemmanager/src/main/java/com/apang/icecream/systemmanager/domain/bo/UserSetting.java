@@ -22,7 +22,7 @@ public class UserSetting extends BaseDto {
 	 * 用户ID
 	 */
 	@TableId("Id")
-	private String Id;
+	private Integer Id;
 
     /**
 	 * 主题
@@ -34,14 +34,14 @@ public class UserSetting extends BaseDto {
 	 * 当前门户ID
 	 */
 	@TableField("currentPortal")
-	private String currentPortal;
+	private Integer currentPortal;
 
 
-	public String getId() {
+	public Integer getId() {
 		return Id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		Id = id;
 	}
 
@@ -53,11 +53,11 @@ public class UserSetting extends BaseDto {
 		this.theme = theme;
 	}
 
-	public String getCurrentPortal() {
+	public Integer getCurrentPortal() {
 		return currentPortal;
 	}
 
-	public void setCurrentPortal(String currentPortal) {
+	public void setCurrentPortal(Integer currentPortal) {
 		this.currentPortal = currentPortal;
 	}
 }

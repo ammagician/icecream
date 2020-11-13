@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface ILoginLogService extends IService<LoginLog> {
     void logoutBySessionId(String sessionId);
-    List<LoginLog> findByVisitorAndTenantIdAndLogoutTimeIsNull(String userName, String tenant);
+    List<LoginLog> findByVisitorAndTenantIdAndLogoutTimeIsNull(String userName, int tenant);
 }

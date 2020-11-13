@@ -1,5 +1,6 @@
 package com.apang.icecream.systemmanager.domain.bo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,8 +17,8 @@ import com.apang.icecream.core.base.BaseDto;
 @TableName("s_behavior_log")
 public class UserBehavior extends BaseDto {
 
-    @TableId("id")
-	private int id;
+	@TableId(value="id",type= IdType.AUTO)
+	private Integer id;
 
     private String visitor;
 
@@ -59,7 +60,7 @@ public class UserBehavior extends BaseDto {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		id = id;
 	}
 

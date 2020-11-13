@@ -4,6 +4,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,14 +22,14 @@ import java.util.List;
 public class Role  extends BaseDto {
     private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String id;
+    @TableId(value="id",type= IdType.AUTO)
+    private Integer id;
     private String code;
     private String name;
     private String remarks;
 
     @TableField("tenantId")
-    private String tenantId;
+    private Integer tenantId;
 
     @TableField(exist = false)
 	private List<Permission> permissions;
@@ -52,11 +53,11 @@ public class Role  extends BaseDto {
         this.permissions = permissions;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -85,11 +86,11 @@ public class Role  extends BaseDto {
         this.remarks = remarks;
     }
 
-    public String getTenantId() {
+    public Integer getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
     }
 
@@ -101,7 +102,7 @@ public class Role  extends BaseDto {
 
         for(Permission p : permissions){
             if(p.getType() == 1){
-                portals.add(p.getResId());
+                portals.add(String.valueOf(p.getResId()));
             }
         }
 

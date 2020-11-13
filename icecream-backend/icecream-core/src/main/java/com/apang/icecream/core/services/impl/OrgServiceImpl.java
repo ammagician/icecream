@@ -37,17 +37,17 @@ public class OrgServiceImpl extends ServiceImpl<OrgMapper, Org> implements IOrgS
 
 
 	@Override
-	public List<Org> getAll(String tenantId) {
+	public List<Org> getAll(int tenantId) {
 		OrgMapper mapper = getMapper();
 		List<Org> orgs = mapper.getAllOrgs(tenantId);
 		return ListUtil.listToTree(orgs);
 	}
 
 	@Override
-	public boolean updateOrder(List<String> ids) {
+	public boolean updateOrder(List<Integer> ids) {
 		List<Org> list = new ArrayList<Org>();
 		int i = 1;
-		for (String id : ids) {
+		for (int id : ids) {
 			Org res = new Org();
 			res.setId(id);
 			res.setOrderNo(i);
@@ -59,23 +59,19 @@ public class OrgServiceImpl extends ServiceImpl<OrgMapper, Org> implements IOrgS
 	}
 
 	@Override
-	public int getMaxOrder(String parentId) {
-		if (parentId == null) {
-			parentId = "";
-		}
-
+	public int getMaxOrder(Integer parentId) {
 		OrgMapper mapper = getMapper();
 		return mapper.getMaxOrder(parentId);
 	}
 
 	@Override
-	public Org getSummaryById(String id) {
+	public Org getSummaryById(int id) {
 		OrgMapper mapper = getMapper();
 		return mapper.getSummaryById(id);
 	}
 
 	@Override
-	public Org getDetailById(String id) {
+	public Org getDetailById(int id) {
 		OrgMapper mapper = getMapper();
 		Org org = mapper.getSummaryById(id);
 		org.setChildren(mapper.getByParentId(org.getParentId()));

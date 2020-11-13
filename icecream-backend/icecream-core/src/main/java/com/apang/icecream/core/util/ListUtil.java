@@ -13,14 +13,14 @@ public class ListUtil {
 			Map<String, T> hash = new HashMap<String, T>();
 			for (T r : list) {
 				Method getId = r.getClass().getDeclaredMethod("getId");
-				String id = (String) getId.invoke(r);
-				hash.put(id, r);
+				Integer id = (Integer) getId.invoke(r);
+				hash.put(String.valueOf(id), r);
 			}
 
 			for (T r : list) {
 				Method getParentId = r.getClass().getDeclaredMethod("getParentId");
-				String parentId = (String) getParentId.invoke(r);
-				T p = hash.get(parentId);
+				Integer parentId = (Integer) getParentId.invoke(r);
+				T p = hash.get(String.valueOf(parentId));
 				if (p == null) {
 					result.add(r);
 				} else {
@@ -35,6 +35,7 @@ public class ListUtil {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("转换异常");
 		}
 

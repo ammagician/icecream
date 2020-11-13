@@ -16,7 +16,9 @@ import javax.servlet.http.HttpSession;
 import com.apang.icecream.auth.constants.AuthConstants;
 import com.apang.icecream.auth.security.UserCount;
 import com.apang.icecream.auth.utils.Tools;
+import com.apang.icecream.core.domain.bo.Tenant;
 import com.apang.icecream.core.services.ILoginLogService;
+import com.apang.icecream.core.services.ITenantService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,6 +68,9 @@ public class CustomLoginController {
 	@Autowired
 	private ILoginLogService loginLogService;
 
+    @Autowired
+    private ITenantService tenantService;
+
     /**
      * 登陆action处理.
      * @param map 参数.
@@ -77,7 +83,15 @@ public class CustomLoginController {
         final String userName = (String) map.get(AuthConstants.C_PARAMETER_USERNAME);
         final String password = (String) map.get(AuthConstants.C_PARAMETER_PASSWORD);
         final String tenant = (String) map.get(AuthConstants.C_PARAMETER_TENANT);
-        
+
+        QueryWrapper<Tenant> queryWrapper = new QueryWrapper<Tenant>();
+        queryWrapper.eq("ukey", tenant);
+        Tenant t = tenantService.getOne(queryWrapper);
+        if(t == null){
+            String msg = "该租户不存在，请检查。";
+            logger.info(msg);
+            return HttpResult.error("用户登陆失败--->" + msg);
+        }
         
         // 密码对称解密
         // TODO.
@@ -85,7 +99,7 @@ public class CustomLoginController {
         try {
             logger.info("---开始进行登陆认证操作---");
             final long startTime = System.currentTimeMillis();
-			final Authentication authentication = new UsernamePasswordAuthenticationToken(tenant + "::::" + userName, password);
+			final Authentication authentication = new UsernamePasswordAuthenticationToken(t.getId() + "::::" + userName, password);
             authenticationManager.authenticate(authentication);
             final long endTime = System.currentTimeMillis();
             logger.info("---登陆认证操作结束，登录认证时间(毫秒)：" + String.valueOf(endTime - startTime));
@@ -95,7 +109,7 @@ public class CustomLoginController {
 			result = HttpResult.ok("用户登陆认证成功。");
 			result.setData(authentication.hashCode());
 			UserCount.add();
-			saveLoginLog(request, userName, tenant);
+			saveLoginLog(request, userName, t.getId());
         } catch (AuthenticationException ex) {
 			String msg = ex.getMessage();
 			logger.info(msg);
@@ -216,11 +230,10 @@ public class CustomLoginController {
         }
     }
 
-	private void saveLoginLog(HttpServletRequest request, String userName, String tenant) {
+	private void saveLoginLog(HttpServletRequest request, String userName, int tenant) {
 		saveLogoutLog(userName, tenant);
 
 		LoginLog log = new LoginLog();
-		log.setId(UUID.randomUUID().toString());
 		log.setIpAddress(AuthenticationUtil.getIpAddress(request));
 		log.setLoginTime(new Timestamp(System.currentTimeMillis()));
 		log.setSessionID(request.getSession().getId());
@@ -229,7 +242,7 @@ public class CustomLoginController {
 		loginLogService.save(log);
 	}
 
-	private void saveLogoutLog(String userName, String tenant) {
+	private void saveLogoutLog(String userName, int tenant) {
         LoginLog log = new LoginLog();
         log.setVisitor(userName);
         log.setTenantId(tenant);
@@ -237,9 +250,11 @@ public class CustomLoginController {
         QueryWrapper<LoginLog> queryWrapper = new QueryWrapper<LoginLog>(log);
 
         List<LoginLog> logList = loginLogService.list(queryWrapper);
-		for (LoginLog logOut : logList) {
-            logOut.setLogoutTime(new Timestamp(System.currentTimeMillis()));
-		}
-        loginLogService.updateBatchById(logList);
+        if(logList.size() > 0){
+            for (LoginLog logOut : logList) {
+                logOut.setLogoutTime(new Timestamp(System.currentTimeMillis()));
+            }
+            loginLogService.updateBatchById(logList);
+        }
 	}
 }

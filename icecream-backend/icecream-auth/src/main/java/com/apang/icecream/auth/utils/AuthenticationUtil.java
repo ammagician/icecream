@@ -92,7 +92,7 @@ public final class AuthenticationUtil {
      *
      * @return 用户Id.
      */
-    public static String getTenantId() {
+    public static Integer getTenantId() {
         AuthUserDetailVO userDetailVO = AuthenticationUtil.getUser();
         if (userDetailVO == null) {
             return null;

@@ -4,6 +4,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,8 +14,8 @@ import java.util.List;
 public class Portal  extends BaseDto {
 	private static final long serialVersionUID = 1L;
 
-	@TableId("id")
-    private String id;
+	@TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     private String code;
 
@@ -31,11 +32,11 @@ public class Portal  extends BaseDto {
 	@TableField(exist = false)
 	private List<String> permissionList; //所有被授权权限的权限代码
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

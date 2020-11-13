@@ -59,7 +59,8 @@ public class UserController {
 
 		HttpResult result = HttpResult.ok();
 		if (user != null) {
-			User data = userService.getDetailById(user.getUser4AuthVO().getId());
+			int userId = Integer.parseInt(user.getUser4AuthVO().getId());
+			User data = userService.getDetailById(userId);
 			result.setData(data);
 		} else {
 			result = HttpResult.error(401, "用户没有登录");
@@ -72,7 +73,7 @@ public class UserController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/user/detail", method = RequestMethod.GET)
 	@ResponseBody
-	public HttpResult getById(@RequestParam("id") String id) {
+	public HttpResult getById(@RequestParam("id") int id) {
 		User user = userService.getDetailById(id);
 		HttpResult result = HttpResult.ok();
 		result.setData(user);
@@ -113,9 +114,7 @@ public class UserController {
 	@ResponseBody
 	@LoggerManage(module = "用户管理", description = "", operate = "新增用户")
 	public HttpResult save(@RequestBody UserVo user) {
-		String tenantId = AuthenticationUtil.getTenantId();
-		String id = UUID.randomUUID().toString();
-		user.setId(id);
+		Integer tenantId = AuthenticationUtil.getTenantId();
 		HttpResult result;
 		try {
 			QueryWrapper<User> queryWrapper = new QueryWrapper<User>();

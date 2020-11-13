@@ -15,24 +15,24 @@ public class TenantPortal {
     private static final long serialVersionUID = 1L;
 
     @TableField("tenantId")
-    private String tenantId;
+    private Integer tenantId;
 
     @TableField("portalId")
-    private String portalId;
+    private Integer portalId;
 
-    public String getTenantId() {
+    public Integer getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(String Integer) {
         this.tenantId = tenantId;
     }
 
-    public String getPortalId() {
+    public Integer getPortalId() {
         return portalId;
     }
 
-    public void setPortalId(String portalId) {
+    public void setPortalId(Integer portalId) {
         this.portalId = portalId;
     }
 }

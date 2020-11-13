@@ -4,6 +4,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -24,8 +25,8 @@ import java.util.List;
 public class User extends BaseDto implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String id;
+    @TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     @TableField("loginName")
     private String loginName;
@@ -42,7 +43,7 @@ public class User extends BaseDto implements UserDetails {
     private String email;
 
     @TableField("orgId")
-    private String orgId;
+    private Integer orgId;
 
     @TableField(exist = false)
     private String orgName;
@@ -51,7 +52,7 @@ public class User extends BaseDto implements UserDetails {
      * 此值存在则说明是来自哪个门户的注册用户，只有该门户的权限
      */
     @TableField("tenantId")
-    private String tenantId;
+    private Integer tenantId;
 
     /**
      * 可以禁用用户，只有两种状态 ：启用，禁用
@@ -79,11 +80,11 @@ public class User extends BaseDto implements UserDetails {
         this.roles = roles;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -158,11 +159,11 @@ public class User extends BaseDto implements UserDetails {
 		this.avatar = avatar;
 	}
 
-    public String getTenantId() {
+    public Integer getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
     }
 
@@ -182,11 +183,11 @@ public class User extends BaseDto implements UserDetails {
         this.email = email;
     }
 
-    public String getOrgId() {
+    public Integer getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(String orgId) {
+    public void setOrgId(Integer orgId) {
         this.orgId = orgId;
     }
 

@@ -20,13 +20,13 @@ import java.util.List;
  * @since 2019-09-06
  */
 public interface TenantMapper extends BaseMapper<Tenant> {
-	public void clearPortals(@Param("id") String tenantId);
+	public void clearPortals(@Param("id") int tenantId);
 
-	public void insertPortals(String tenantId, List<String> ids);
+	public void insertPortals(int tenantId, List<String> ids);
 
-	public Tenant getDetailById(String id);
+	public Tenant getDetailById(int id);
 
 	IPage<Tenant> getPage(Page<Tenant> page, @Param(Constants.WRAPPER) QueryWrapper<Tenant> queryWrapper);
 
-	public List<TenantPortal> findAllByTenantId(String tenantId);
+	public List<TenantPortal> findAllByTenantId(int tenantId);
 }

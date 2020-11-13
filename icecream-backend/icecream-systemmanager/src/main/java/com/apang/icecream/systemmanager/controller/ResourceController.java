@@ -104,7 +104,7 @@ public class ResourceController {
 	}
 
 	private HttpResult save(Resource resources) {
-		resources.setId(UUID.randomUUID().toString());
+		//resources.setId(UUID.randomUUID().toString());
 		boolean success = resourcesService.save(resources);
 
 		HttpResult result = HttpResult.ok();
@@ -142,7 +142,7 @@ public class ResourceController {
 				p.setId(r.getId());
 				p.setName(r.getName());
 				p.setChildren(new ArrayList<Resource>());
-				hash.put(r.getId(), p);
+				hash.put(r.getId().toString(), p);
 				continue;
 			}
 
@@ -189,7 +189,7 @@ public class ResourceController {
 		Map<String, List<Resource>> hash = new HashMap<String, List<Resource>>();
 		// 根据relationId找到页面
 		for (Resource r : list) {
-			String rId = r.getRelationId();
+			String rId = String.valueOf(r.getRelationId());
 			if (r.getType() == 4 && !StringUtils.isEmpty(rId)) {
 				ids.add(rId);
 				List<Resource> group = hash.get(rId);
@@ -208,7 +208,7 @@ public class ResourceController {
 			queryWrapper.in("PARENTID", ids);
 			List<Resource> btns = resourcesService.list(queryWrapper);
 			for (Resource btn : btns) {
-				String pId = btn.getParentId();
+				String pId = String.valueOf(btn.getParentId());
 				List<Resource> ps = hash.get(pId);
 				for (Resource p : ps) {
 					List<Resource> children = p.getChildren();
@@ -284,7 +284,7 @@ public class ResourceController {
 	public HttpResult getPortalListByTenant(@RequestBody Resource res) {
 		res.setType(1);
 		QueryWrapper<Resource> queryWrapper = getBaseQueryWrapper(res);
-		String tenantId = AuthenticationUtil.getTenantId();
+		int tenantId = AuthenticationUtil.getTenantId();
 		List<String> portals = tenantService.getDetailById(tenantId).getPortals();
 		queryWrapper.in("id", portals);
 		return getList(queryWrapper);
@@ -466,7 +466,7 @@ public class ResourceController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/btn/list", method = RequestMethod.GET)
 	@ResponseBody
-	public HttpResult getBtnList(@RequestParam(value = "page", required = false) String page) {
+	public HttpResult getBtnList(@RequestParam(value = "page", required = false) int page) {
 		Resource res = new Resource();
 		res.setParentId(page);
 		res.setType(6);

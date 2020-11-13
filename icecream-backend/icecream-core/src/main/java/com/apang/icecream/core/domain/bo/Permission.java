@@ -1,6 +1,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,23 +12,23 @@ import java.util.UUID;
 public class Permission  extends BaseDto {
 	private static final long serialVersionUID = 1L;
 
-	@TableId("id")
-	private String id;
+	@TableId(value="id",type= IdType.AUTO)
+	private Integer id;
 
 	@TableField("roleId")
-	private String roleId;
+	private Integer roleId;
 	@TableField("resId")
-	private String resId;
+	private Integer resId;
 	@TableField("portalId")
-	private String portalId;  //方便查询
+	private Integer portalId;  //方便查询
 
 	/**
 	 * 类型分为：1：门户 2：portlet 3：目录 4：菜单 5：页面 6：按钮
 	 */
 	private Integer type;
 
-	public Permission(String roleId, String resId, String portalId, Integer type) {
-		this.id = UUID.randomUUID().toString();
+	public Permission(Integer roleId, Integer resId, Integer portalId, Integer type) {
+		//this.id = UUID.randomUUID().toString();
 		this.roleId = roleId;
 		this.portalId = portalId;
 		this.resId = resId;
@@ -37,27 +38,27 @@ public class Permission  extends BaseDto {
 	public Permission() {
 	}
 
-	public String getRoleId() {
+	public Integer getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(String roleId) {
+	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}
 
-	public String getResId() {
+	public Integer getResId() {
 		return resId;
 	}
 
-	public void setResId(String resId) {
+	public void setResId(Integer resId) {
 		this.resId = resId;
 	}
 
-	public String getPortalId() {
+	public Integer getPortalId() {
 		return portalId;
 	}
 
-	public void setPortalId(String portalId) {
+	public void setPortalId(Integer portalId) {
 		this.portalId = portalId;
 	}
 
@@ -69,11 +70,11 @@ public class Permission  extends BaseDto {
 		this.type = type;
 	}
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

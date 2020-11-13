@@ -55,7 +55,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 		return success;
 	}
 
-	private boolean updatePortals(String roleId, List<String> portals) {
+	private boolean updatePortals(int roleId, List<String> portals) {
 		QueryWrapper<Permission> queryWrapper = new QueryWrapper<Permission>();
 		queryWrapper.eq("ROLEID", roleId);
 		queryWrapper.eq("TYPE", 1);
@@ -65,11 +65,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 		portals_new.addAll(portals);
 
 		for (Permission p : list) {
-			String resId = p.getResId();
+			String resId = p.getResId().toString();
 			if (portals.contains(resId)) {
 				portals_new.remove(resId);
 			}else{
-				permission_del.add(p.getId());
+				permission_del.add(p.getId().toString());
 			}
 		}
 
@@ -82,9 +82,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 		list = new ArrayList<Permission>();
 		for (String id : portals_new) {
 			Permission p = new Permission();
-			p.setId(UUID.randomUUID().toString());
-			p.setPortalId(id);
-			p.setResId(id);
+			p.setPortalId(Integer.parseInt(id));
+			p.setResId(Integer.parseInt(id));
 			p.setRoleId(roleId);
 			p.setType(1);
 			list.add(p);
@@ -98,7 +97,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
 	@Override
 	public boolean updatePortal(Role role, String portalId) {
-		String roleId = role.getId();
+		String roleId = role.getId().toString();
 		QueryWrapper<Permission> queryWrapper = new QueryWrapper<Permission>();
 		queryWrapper.eq("ROLEID", roleId);
 		queryWrapper.eq("PortalId", portalId);
@@ -109,10 +108,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 		}
 		List<Permission> list = role.getPermissions();
 		if (success && !CollectionUtils.isEmpty(list)) {
-			for (Permission p : list) {
-				p.setId(UUID.randomUUID().toString());
-			}
-
 			success = addResources(list);
 		}
 
@@ -122,8 +117,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 	@Override
 	public List<Permission> getPermision(String roleId, String portalId) {
 		Permission o = new Permission();
-		o.setRoleId(roleId);
-		o.setPortalId(portalId);
+		o.setRoleId(Integer.parseInt(roleId));
+		o.setPortalId(Integer.parseInt(portalId));
 		QueryWrapper<Permission> queryWrapper = new QueryWrapper<Permission>(o);
 		queryWrapper.notIn("RESID", portalId);
 		return permissionService.list(queryWrapper);

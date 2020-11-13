@@ -22,9 +22,9 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 	void clearRolesByUsers(@Param("ids") List<String> ids);
 
-	void insertRoles(String userId, List<Role> roles);
+	void insertRoles(int userId, List<Role> roles);
 
-	User getDetailById(String id);
+	User getDetailById(int id);
 
 	IPage<User> getPage(Page<User> page, @Param(Constants.WRAPPER) QueryWrapper<User> queryWrapper);
 

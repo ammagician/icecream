@@ -21,14 +21,14 @@ import java.util.Set;
  */
 public interface ResourceMapper extends BaseMapper<Resource> {
 
-	Set<String> getPermisionByRole(String roleId);
+	Set<String> getPermisionByRole(int roleId);
 	
-	int getMaxOrder(String parentId, List<Integer> types);
+	int getMaxOrder(Integer parentId, List<Integer> types);
 
 	IPage<Resource> getCustomPage(Page<Resource> page,
 								  @Param(Constants.WRAPPER) QueryWrapper<Resource> queryWrapper);
 
 	List<Resource> getCustomList(@Param(Constants.WRAPPER) QueryWrapper<Resource> queryWrapper);
 
-	List<Resource> getGrantResources(String userId);
+	List<Resource> getGrantResources(int userId);
 }

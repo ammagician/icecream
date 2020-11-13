@@ -21,12 +21,12 @@ public interface IResourceService extends IService<Resource> {
 
 	boolean updateOrder(List<String> ids);
 
-	int getMaxOrder(String parentId, List<Integer> types);
+	int getMaxOrder(Integer parentId, List<Integer> types);
 
 	IPage<Resource> getPage(Page<Resource> page, @Param("queryWrapper") QueryWrapper<Resource> queryWrapper);
 
 	List<Resource> getList(@Param("queryWrapper") QueryWrapper<Resource> queryWrapper);
 
-	List<Resource> getGrantResources(String userId);
+	List<Resource> getGrantResources(int userId);
 
 }

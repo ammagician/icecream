@@ -14,13 +14,13 @@ import java.util.List;
  * @since 2019-09-06
  */
 public interface IOrgService extends IService<Org> {
-	List<Org> getAll(String tenantId);
+	List<Org> getAll(int tenantId);
 
-	Org getSummaryById(String id);
+	Org getSummaryById(int id);
 
-	Org getDetailById(String id);
+	Org getDetailById(int id);
 
-	boolean updateOrder(List<String> ids);
+	boolean updateOrder(List<Integer> ids);
 
-	int getMaxOrder(String parentId);
+	int getMaxOrder(Integer parentId);
 }

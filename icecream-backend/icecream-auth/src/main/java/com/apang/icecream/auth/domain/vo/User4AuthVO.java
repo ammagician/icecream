@@ -12,7 +12,7 @@ public class User4AuthVO implements Serializable {
     private String userName;
     private long isDisabled;
 	private String avatar;
-	private String tenantId;
+	private Integer tenantId;
 
     private Org Org;
 
@@ -73,11 +73,11 @@ public class User4AuthVO implements Serializable {
 		this.avatar = avatar;
 	}
 
-    public String getTenantId() {
+    public Integer getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
     }
 }

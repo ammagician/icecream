@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.apang.icecream.core.mapper.OrgMapper">
 	<select id="getAllOrgs"
-		resultType="com.apang.icecream.core.domain.bo.Org" parameterType="string">
+		resultType="com.apang.icecream.core.domain.bo.Org" parameterType="int">
 		select org1.id, org1.name, org1.code, org1.type, org1.orderNo, org1.remarks, org1.parentId, org2.name parentName, org1.tenantId
 		from s_org org1
 		left join s_org org2 on org1.parentId = org2.id
@@ -11,7 +11,7 @@
 	</select>
 	
 	<select id="getSummaryById"
-            resultType="com.apang.icecream.core.domain.bo.Org" parameterType="string">
+            resultType="com.apang.icecream.core.domain.bo.Org" parameterType="int">
 		select org1.id, org1.name, org1.code, org1.type, org1.orderNo, org1.remarks, org1.parentId, org2.name parentName
 		from s_org org1
 		left join s_org org2 on org1.parentId = org2.id
@@ -19,7 +19,7 @@
 	</select>
 	
 	<select id="getByParentId"
-            resultType="com.apang.icecream.core.domain.bo.Org" parameterType="string">
+            resultType="com.apang.icecream.core.domain.bo.Org" parameterType="int">
 		select org1.id, org1.name, org1.code, org1.type, org1.orderNo, org1.remarks, org1.parentId, org2.name parentName
 		from s_org org1
 		left join s_org org2 on org1.parentId = org2.id
@@ -27,7 +27,7 @@
 		order by orderNo
 	</select>
 	
-	<select id="getMaxOrder" resultType="integer" parameterType="string">
+	<select id="getMaxOrder" resultType="integer" parameterType="integer">
 	     select IFNULL(max(orderNo), 1) from s_org where parentId = #{parentId}
 	</select>
 

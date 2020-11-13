@@ -4,14 +4,15 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("s_resource")
 public class Portlet extends BaseDto {
 	private static final long serialVersionUID = 1L;
-	@TableId("id")
-    private String id;
+	@TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     private String code;
 
@@ -22,15 +23,15 @@ public class Portlet extends BaseDto {
 	private String icon;
 
 	@TableId("portalId")
-	private String portalId;
+	private Integer portalId;
 
     private String remarks;
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -58,11 +59,11 @@ public class Portlet extends BaseDto {
 		this.url = url;
 	}
 
-	public String getPortalId() {
+	public Integer getPortalId() {
 		return portalId;
 	}
 
-	public void setPortalId(String portalId) {
+	public void setPortalId(Integer portalId) {
 		this.portalId = portalId;
 	}
 

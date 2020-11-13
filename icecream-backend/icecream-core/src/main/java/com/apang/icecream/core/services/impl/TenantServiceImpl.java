@@ -52,7 +52,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 
 
 	@Override
-	public boolean updatePortals(String id, List<String> ids) {
+	public boolean updatePortals(int id, List<String> ids) {
 		TenantMapper mapper = getMapper();
 		mapper.clearPortals(id);
 		if (!CollectionUtils.isEmpty(ids)) {
@@ -63,7 +63,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 	}
 
 	@Override
-	public Tenant getDetailById(String id) {
+	public Tenant getDetailById(int id) {
 		TenantMapper mapper = getMapper();
 		return mapper.getDetailById(id);
 	}
@@ -71,15 +71,13 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 	@Override
 	public void saveOrUpdateSafely(Tenant tenant) {
 		if(StringUtils.isEmpty(tenant.getId())){
-			String id = UUID.randomUUID().toString();
-			tenant.setId(id);
 			saveOrUpdate(tenant);
-			updatePortals(id, tenant.getPortals());
+			int tenantId = tenant.getId();
+			updatePortals(tenantId, tenant.getPortals());
 
 			//创建组织
 			Org org = new Org();
-			org.setTenantId(id);
-			org.setId(UUID.randomUUID().toString());
+			org.setTenantId(tenant.getId());
 			org.setName(tenant.getRootOrg());
 			org.setRemarks(tenant.getRootOrg());
 			org.setCode(tenant.getRootOrgCode());
@@ -89,33 +87,31 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 
 			//创建角色,授权门户
 			Role role = new Role();
-			String roleId = UUID.randomUUID().toString();
-			String portalId = "1d2e030e-0a65-4239-bfae-1dace826e581";  //管理门户id
-			role.setId(roleId);
+			int portalId = 10;  //管理门户id
 			role.setName("管理员");
 			role.setCode("admin");
 			role.setRemarks("租户：" + tenant.getName()  + " --- 管理员角色");
-			role.setTenantId(id);
+			role.setTenantId(tenantId);
 			List<String> portals = new ArrayList<String>();
-			portals.add(portalId);
+			portals.add(portalId + "");
 			role.setPortals(portals);
 			roleService.saveOrUpdateSafely(role);
+			int roleId = role.getId();
 
 			//授权菜单资源
 			Role role_p = new Role();
 			role_p.setId(roleId);
 			List<Permission> permissions = new ArrayList<Permission>();
-			permissions.add(new Permission(roleId, "d309dad3-8301-433b-a6f0-7feacd7ff2a5", portalId, 3));
-			permissions.add(new Permission(roleId, "ef6ed001-c7c8-45d7-bb97-66f8250d09b1", portalId, 4));
-			permissions.add(new Permission(roleId, "ef6ed001-c7c8-45d7-bb97-66f8250d09b2", portalId, 4));
-			permissions.add(new Permission(roleId, "ef6ed001-c7c8-45d7-bb97-66f8250d09b7", portalId, 4));
+			permissions.add(new Permission(roleId, 20, portalId, 3));
+			permissions.add(new Permission(roleId, 21, portalId, 4));
+			permissions.add(new Permission(roleId, 22, portalId, 4));
+			permissions.add(new Permission(roleId, 23, portalId, 4));
 			role_p.setPermissions(permissions);
-			roleService.updatePortal(role_p, portalId);
+			roleService.updatePortal(role_p, portalId + "");
 
 			//创建管理员
 			User user = new User();
-			user.setTenantId(id);
-			user.setId(UUID.randomUUID().toString());
+			user.setTenantId(tenantId);
 			byte[] pwd = userProperty.getDefaultPassword().getBytes();
 			String pwdStr = DigestUtils.md5DigestAsHex(pwd);
 			user.setPassword(EncodeUtil.encode(pwdStr));
@@ -134,8 +130,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 		}else{
 			boolean success = saveOrUpdate(tenant);
 			if (success) {
-				String id = tenant.getId();
-				updatePortals(id, tenant.getPortals());
+				updatePortals(tenant.getId(), tenant.getPortals());
 			}
 		}
 	}
@@ -146,7 +141,7 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
 	}
 
 	@Override
-	public List<TenantPortal> findAllByTenantId(String tenantId) {
+	public List<TenantPortal> findAllByTenantId(int tenantId) {
 		return getMapper().findAllByTenantId(tenantId);
 	}
 

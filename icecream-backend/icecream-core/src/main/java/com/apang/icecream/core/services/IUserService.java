@@ -18,11 +18,11 @@ import java.util.List;
  * @since 2019-09-06
  */
 public interface IUserService extends IService<User> {
-	public User findByLoginNameAndTenantId(String loginName, String tenantId);
+	public User findByLoginNameAndTenantId(String loginName, int tenantId);
 
-	public boolean updateRole(String ids, List<Role> roles);
+	public boolean updateRole(int id, List<Role> roles);
 
-	public User getDetailById(String id);
+	public User getDetailById(int id);
 
 	public void saveOrUpdateSafely(User user);
 

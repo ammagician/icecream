@@ -47,7 +47,7 @@ public class OrgController {
 	@ApiResponses({ @ApiResponse(code = 200, message = "查询成功") })
 	@RequestMapping(value = "/org/detail", method = RequestMethod.GET)
 	@ResponseBody
-	public HttpResult getById(@RequestParam("id") String id) {
+	public HttpResult getById(@RequestParam("id") int id) {
 		Org org = orgService.getById(id);
 		HttpResult result = HttpResult.ok();
 		result.setData(org);
@@ -71,7 +71,6 @@ public class OrgController {
 	@ResponseBody
 	@LoggerManage(module = "组织管理", description = "", operate = "新增组织")
 	public HttpResult save(@RequestBody Org org) {
-		org.setId(UUID.randomUUID().toString());
 		org.setTenantId(AuthenticationUtil.getTenantId());
 		int size = orgService.getMaxOrder(org.getParentId());
 		org.setOrderNo(size + 1);
@@ -128,7 +127,7 @@ public class OrgController {
 	@RequestMapping(value = "/org/order", method = RequestMethod.PUT)
 	@ResponseBody
 	@LoggerManage(module = "组织管理", description = "", operate = "更新组织顺序")
-	public HttpResult updateOrder(@RequestBody List<String> ids) {
+	public HttpResult updateOrder(@RequestBody List<Integer> ids) {
 		boolean success = orgService.updateOrder(ids);
 		HttpResult result = HttpResult.ok();
 		result.setSuccess(success);

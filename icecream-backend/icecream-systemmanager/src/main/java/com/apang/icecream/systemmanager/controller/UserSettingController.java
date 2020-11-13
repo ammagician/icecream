@@ -42,14 +42,14 @@ public class UserSettingController {
 	@RequestMapping(value = "/user/setting", method = RequestMethod.GET)
 	@ResponseBody
 	public HttpResult getById() {
-		String id = AuthenticationUtil.getUserId();
+		String userId = AuthenticationUtil.getUserId();
 		HttpResult result = HttpResult.ok();
-		if (!StringUtils.isEmpty(id)) {
-			UserSetting setting = userSettingService.getById(id);
+		if (!StringUtils.isEmpty(userId)) {
+			UserSetting setting = userSettingService.getById(userId);
 			List<Portal> portals = AuthenticationUtil.getUser().getPortalList();
 			if(setting == null && portals.size() > 0){
 				setting = new UserSetting();
-				setting.setId(UUID.randomUUID().toString());
+				setting.setId(Integer.parseInt(userId));
 				setting.setCurrentPortal(portals.get(0).getId());
 				setting.setTheme("{\"navTheme\":\"dark\",\"primaryColor\":\"#52C41A\",\"layout\":\"sidemenu\",\"contentWidth\":\"Fluid\",\"fixedHeader\":true,\"autoHideHeader\":false,\"fixSiderbar\":false,\"colorWeak\":false}");
 			}
@@ -70,7 +70,7 @@ public class UserSettingController {
 		String userId = AuthenticationUtil.getUserId();
 		HttpResult result = HttpResult.ok();
 		if (!StringUtils.isEmpty(userId)) {
-			setting.setId(userId);
+			setting.setId(Integer.parseInt(userId));
 			boolean success = userSettingService.saveOrUpdate(setting);
 			result.setData(success);
 			result.setMsg(success ? "成功" : "失败");

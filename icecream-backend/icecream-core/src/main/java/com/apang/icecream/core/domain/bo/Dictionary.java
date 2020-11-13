@@ -1,5 +1,6 @@
 package com.apang.icecream.core.domain.bo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,8 +19,8 @@ public class Dictionary extends BaseDto {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String id;
+    @TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     @TableField("typeName")
     private String typeName;
@@ -38,11 +39,11 @@ public class Dictionary extends BaseDto {
     @TableField("logicId")
     private String logicId;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String Id) {
+    public void setId(Integer Id) {
         this.id = Id;
     }
     public String getTypeName() {

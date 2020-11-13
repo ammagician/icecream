@@ -53,7 +53,7 @@ public class OperateLogAop {
 
 	private OperateLog createLog(HttpServletRequest request, LoggerManage loggerManage) {
 		OperateLog log = new OperateLog();
-		log.setId(UUID.randomUUID().toString());
+		//log.setId(UUID.randomUUID().toString());
 		log.setIpAddress(AuthenticationUtil.getIpAddress(request));
 		log.setVisitTime(new Timestamp(System.currentTimeMillis()));
 		log.setSessionID(request.getSession().getId());

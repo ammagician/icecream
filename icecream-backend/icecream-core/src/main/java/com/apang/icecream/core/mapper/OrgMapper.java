@@ -14,11 +14,11 @@ import java.util.List;
  * @since 2019-09-06
  */
 public interface OrgMapper extends BaseMapper<Org> {
-	List<Org> getAllOrgs(String tenantId);
+	List<Org> getAllOrgs(int tenantId);
 
-	Org getSummaryById(String id);
+	Org getSummaryById(int id);
 
-	List<Org> getByParentId(String parentId);
+	List<Org> getByParentId(int parentId);
 
-	int getMaxOrder(String parentId);
+	int getMaxOrder(int parentId);
 }

@@ -93,7 +93,7 @@ public class RoleController {
 	public HttpResult save(@RequestBody RoleVo role) {
 		HttpResult result;
 		try {
-			role.setId(UUID.randomUUID().toString());
+			//role.setId(UUID.randomUUID().toString());
 			role.setTenantId(AuthenticationUtil.getTenantId());
 			roleService.saveOrUpdateSafely(role);
 			result = HttpResult.ok();
@@ -173,7 +173,7 @@ public class RoleController {
 			wrapper.like("code", role.getCode());
 		}
 
-		wrapper.like("tenantId", AuthenticationUtil.getTenantId());
+		wrapper.eq("tenantId", AuthenticationUtil.getTenantId());
 
 		return wrapper;
 	}

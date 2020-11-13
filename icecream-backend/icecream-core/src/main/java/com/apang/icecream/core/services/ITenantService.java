@@ -18,13 +18,13 @@ import java.util.List;
  * @since 2019-09-06
  */
 public interface ITenantService extends IService<Tenant> {
-	public boolean updatePortals(String id, List<String> ids);
+	public boolean updatePortals(int id, List<String> ids);
 
-	public Tenant getDetailById(String id);
+	public Tenant getDetailById(int id);
 
 	public void saveOrUpdateSafely(Tenant tenant);
 
 	IPage<Tenant> getPage(Page<Tenant> page, QueryWrapper<Tenant> queryWrapper);
 
-	public List<TenantPortal> findAllByTenantId(String tenantId);
+	public List<TenantPortal> findAllByTenantId(int tenantId);
 }

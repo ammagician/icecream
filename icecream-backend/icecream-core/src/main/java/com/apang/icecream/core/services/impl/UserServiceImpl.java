@@ -4,6 +4,7 @@ import com.apang.icecream.core.domain.bo.Role;
 import com.apang.icecream.core.domain.bo.User;
 import com.apang.icecream.core.mapper.UserMapper;
 import com.apang.icecream.core.services.IUserService;
+import com.apang.icecream.core.util.ListUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	private SqlSessionFactory sessionFactory;
 
 	@Override
-	public User findByLoginNameAndTenantId(String loginName, String tenantId) {
+	public User findByLoginNameAndTenantId(String loginName, int tenantId) {
 		User user = new User();
 		user.setLoginName(loginName);
 		user.setTenantId(tenantId);
@@ -45,20 +46,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	}
 
 	@Override
-	public boolean updateRole(String ids, List<Role> roles) {
+	public boolean updateRole(int id, List<Role> roles) {
 		UserMapper mapper = getMapper();
-		String[] idArr = ids.split(",");
-		List<String> list = Arrays.asList(idArr);
+		List<String> list = ListUtil.splitToList(id+"", ",");
 		mapper.clearRolesByUsers(list);
-		if (!CollectionUtils.isEmpty(roles) && idArr.length == 1) {
-			mapper.insertRoles(ids, roles);
+		if (!CollectionUtils.isEmpty(roles) && list.size() == 1) {
+			mapper.insertRoles(id, roles);
 		}
 
 		return true;
 	}
 
 	@Override
-	public User getDetailById(String id) {
+	public User getDetailById(int id) {
 		UserMapper mapper = getMapper();
 		return mapper.getDetailById(id);
 	}
@@ -72,8 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 	public void saveOrUpdateSafely(User user) {
 		boolean success = saveOrUpdate(user);
 		if (success) {
-			String id = user.getId();
-			updateRole(id, user.getRoles());
+			updateRole(user.getId(), user.getRoles());
 		}
 	}
 

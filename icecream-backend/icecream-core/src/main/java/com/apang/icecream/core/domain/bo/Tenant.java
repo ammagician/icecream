@@ -1,11 +1,11 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +21,8 @@ public class Tenant extends BaseDto {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String id;
+    @TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     private String name;
 
@@ -34,14 +34,17 @@ public class Tenant extends BaseDto {
 
     private String remarks;
 
+    @TableField("ukey")
+    private String uKey;
+
     @TableField(exist = false)
     List<String> portals;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -83,6 +86,15 @@ public class Tenant extends BaseDto {
 
     public void setPortals(List<String> portals) {
         this.portals = portals;
+    }
+
+
+    public String getuKey() {
+        return uKey;
+    }
+
+    public void setuKey(String uKey) {
+        this.uKey = uKey;
     }
 
     @Override

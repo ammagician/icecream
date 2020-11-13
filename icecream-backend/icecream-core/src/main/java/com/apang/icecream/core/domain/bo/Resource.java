@@ -1,6 +1,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,17 +21,17 @@ import java.util.List;
 public class Resource extends BaseDto {
 	private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String Id;
+	@TableId(value="id",type= IdType.AUTO)
+    private Integer Id;
 
     @TableField("parentId")
-    private String parentId;
+    private Integer parentId;
 
 	@TableField(exist = false)
 	private String parentName;
 
 	@TableField("portalId")
-	private String portalId;
+	private Integer portalId;
 
 	@TableField(exist = false)
 	private String portalName;
@@ -54,24 +55,24 @@ public class Resource extends BaseDto {
 	private Integer orderNo;
 
 	@TableField("relationId")
-	private String relationId;   //关联了哪个资源，比如菜单关联页面
+	private Integer relationId;   //关联了哪个资源，比如菜单关联页面
 
 	@TableField(exist = false)
 	private List<Resource> children = new ArrayList<Resource>();
 
-	public String getId() {
+	public Integer getId() {
 		return Id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		Id = id;
 	}
 
-	public String getParentId() {
+	public Integer getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(String parentId) {
+	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
 	}
 
@@ -83,11 +84,11 @@ public class Resource extends BaseDto {
 		this.parentName = parentName;
 	}
 
-	public String getPortalId() {
+	public Integer getPortalId() {
 		return portalId;
 	}
 
-	public void setPortalId(String portalId) {
+	public void setPortalId(Integer portalId) {
 		this.portalId = portalId;
 	}
 
@@ -155,11 +156,11 @@ public class Resource extends BaseDto {
 		this.orderNo = orderNo;
 	}
 
-	public String getRelationId() {
+	public Integer getRelationId() {
 		return relationId;
 	}
 
-	public void setRelationId(String relationId) {
+	public void setRelationId(Integer relationId) {
 		this.relationId = relationId;
 	}
 

@@ -1,6 +1,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,11 +22,11 @@ public class Org extends BaseDto {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("id")
-    private String id;
+    @TableId(value="id",type= IdType.AUTO)
+    private Integer id;
 
     @TableField("parentId")
-    private String parentId;
+    private Integer parentId;
 
 	@TableField(exist = false)
 	private String parentName;
@@ -45,20 +46,20 @@ public class Org extends BaseDto {
 	private List<Org> children = new ArrayList<Org>();
 
     @TableField("tenantId")
-	private String tenantId;
+	private Integer tenantId;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String Id) {
+    public void setId(Integer Id) {
         this.id = Id;
     }
-    public String getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(String parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
     public String getName() {
@@ -113,11 +114,11 @@ public class Org extends BaseDto {
 		this.children = children;
 	}
 
-    public String getTenantId() {
+    public Integer getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(String tenantId) {
+    public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
     }
 

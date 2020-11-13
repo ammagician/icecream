@@ -41,7 +41,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 		int i = 1;
 		for (String id : ids) {
 			Resource res = new Resource();
-			res.setId(id);
+			res.setId(Integer.parseInt(id));
 			res.setOrderNo(i);
 			list.add(res);
 			i++;
@@ -51,10 +51,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 	}
 
 	@Override
-	public int getMaxOrder(String parentId, List<Integer> types) {
-		if (parentId == null) {
-			parentId = "";
-		}
+	public int getMaxOrder(Integer parentId, List<Integer> types) {
 		return getMapper().getMaxOrder(parentId, types);
 	}
 
@@ -64,7 +61,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 	}
 
 	@Override
-	public List<Resource> getGrantResources(String userId) {
+	public List<Resource> getGrantResources(int userId) {
 		return getMapper().getGrantResources(userId);
 	}
 

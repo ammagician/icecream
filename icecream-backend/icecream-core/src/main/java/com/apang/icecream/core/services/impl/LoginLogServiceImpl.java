@@ -37,7 +37,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     }
 
     @Override
-    public List<LoginLog> findByVisitorAndTenantIdAndLogoutTimeIsNull(String userName, String tenant) {
+    public List<LoginLog> findByVisitorAndTenantIdAndLogoutTimeIsNull(String userName, int tenant) {
         LoginLog log = new LoginLog();
         log.setVisitor(userName);
         log.setTenantId(tenant);

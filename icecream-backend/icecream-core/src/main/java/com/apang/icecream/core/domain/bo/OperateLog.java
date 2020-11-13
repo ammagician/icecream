@@ -1,6 +1,7 @@
 package com.apang.icecream.core.domain.bo;
 
 import com.apang.icecream.core.base.BaseDto;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,8 +19,8 @@ public class OperateLog extends BaseDto {
 
 	private static final long serialVersionUID = 1L;
 
-	@TableId("id")
-	private String Id;
+	@TableId(value="id",type= IdType.AUTO)
+	private Integer Id;
 
 	private String visitor;
 
@@ -47,13 +48,13 @@ public class OperateLog extends BaseDto {
 	private String sessionID;
 
 	@TableField("tenantId")
-	private String tenantId;
+	private Integer tenantId;
 
-	public String getId() {
+	public Integer getId() {
 		return Id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		Id = id;
 	}
 
@@ -129,11 +130,11 @@ public class OperateLog extends BaseDto {
 		this.sessionID = sessionID;
 	}
 
-	public String getTenantId() {
+	public Integer getTenantId() {
 		return tenantId;
 	}
 
-	public void setTenantId(String tenantId) {
+	public void setTenantId(Integer tenantId) {
 		this.tenantId = tenantId;
 	}
 
