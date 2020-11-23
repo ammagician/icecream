@@ -11,7 +11,7 @@
         <el-input v-model="searchObj.name" placeholder="名称" />
       </el-form-item>
       <el-form-item label="KEY">
-        <el-input v-model="searchObj.id" placeholder="唯一标识" />
+        <el-input v-model="searchObj.uKey" placeholder="唯一标识" />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -54,6 +54,13 @@
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-key"
+            @click="handleReset(scope.row)"
+            >重置</el-button
+          >
           <el-button
             type="primary"
             size="mini"
@@ -142,7 +149,7 @@ import { Message } from 'element-ui'
 import CustomColumn from '@/components/CustomColumn'
 import { removeEmptyItem } from '@/utils'
 import { queryAll as queryAllPortals } from '@/api/sys/portal'
-import { queryList, save, del } from '@/api/sys/tenant'
+import { queryList, save, del, resetPwd } from '@/api/sys/tenant'
 const defaultTenant = {
   id: '',
   name: '测试租户',
@@ -162,17 +169,13 @@ export default {
           label: '名称'
         },
         {
-          prop: 'id',
+          prop: 'uKey',
           label: '唯一标识'
         },
         {
           prop: 'rootOrg',
           label: '根组织',
           width: '140px'
-        },
-        {
-          prop: 'adminAccount',
-          label: '管理员账号'
         },
         {
           prop: 'remarks',
@@ -240,6 +243,16 @@ export default {
           type: res.success ? 'success' : 'error',
           duration: 3 * 1000
         })
+      })
+    },
+
+    handleReset(row){
+      resetPwd(row).then(res => {
+        Message({
+            message: "重置" + (res.success ? '成功' : '失败'),
+            type: res.success ?'success': 'error',
+            duration: 3 * 1000
+          })
       })
     },
 

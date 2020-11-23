@@ -7,6 +7,7 @@
 		<result property="name" column="name" />
 		<result property="rootOrg" column="rootOrg" />
 		<result property="remarks" column="remarks" />
+		<result property="uKey" column="uKey" />
         <collection property="portals" resultMap="PortalsMap" />
     </resultMap>
 	<resultMap id="PortalsMap" type="string">

@@ -106,6 +106,7 @@ public class Tenant extends BaseDto {
                 ", rootOrgCode='" + rootOrgCode + '\'' +
                 ", remarks='" + remarks + '\'' +
                 ", portals=" + portals +
+                ", uKey=" + uKey +
                 '}';
     }
 }

@@ -27,3 +27,10 @@ export function del(data) {
     params: data,
   });
 }
+
+export function resetPwd(data) {
+  return request(`/api/sysmgr/tenant/resetPwd`, {
+    method: 'post',
+    data,
+  });
+}

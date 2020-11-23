@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import com.apang.icecream.core.domain.bo.Tenant;
 import com.apang.icecream.core.domain.bo.User;
 import com.apang.icecream.core.services.IUserService;
 import com.apang.icecream.core.util.ListUtil;
@@ -202,6 +203,30 @@ public class UserController {
 		HttpResult result = HttpResult.ok();
 		result.setSuccess(success);
 
+		return result;
+	}
+
+	@ApiOperation(value = "重置租户管理员密码")
+	@ApiResponses({ @ApiResponse(code = 200, message = "重置成功") })
+	@RequestMapping(value = "/user/resetAdmin", method = RequestMethod.POST)
+	@ResponseBody
+	@LoggerManage(module = "用户管理", description = "", operate = "重置租户管理员密码")
+	public HttpResult resetAdmin(@RequestBody Tenant tenant) {
+		HttpResult result;
+		try {
+			User user = new User();
+			user.setLoginName("admin");
+			user.setTenantId(tenant.getId());
+
+			QueryWrapper<User> queryWrapper = new QueryWrapper<User>(user);
+			user = userService.getOne(queryWrapper);
+			String pwd = DigestUtils.md5DigestAsHex(userProperty.getDefaultPassword().getBytes());
+			user.setPassword(EncodeUtil.encode(pwd));
+			userService.saveOrUpdateSafely(user);
+			result = HttpResult.ok();
+		} catch (Exception e) {
+			result = HttpResult.error("服务器异常");
+		}
 		return result;
 	}
 
