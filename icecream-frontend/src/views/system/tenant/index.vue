@@ -178,6 +178,20 @@ export default {
           width: '140px'
         },
         {
+          prop: 'portals',
+          label: '授权门户',
+          render: (r, params)=>{
+            const ps = this.portals;
+            const names = (params.row.portals.map(p=>{
+              const m = ps.find(e=>{
+                return e.id === p
+              });
+              return m.name
+            })).join(",")
+            return <span>{names}</span>
+          }
+        },
+        {
           prop: 'remarks',
           label: '备注'
         }
@@ -208,7 +222,12 @@ export default {
   created() {
     queryAllPortals().then(res => {
       if (res.success) {
-        this.portals = res.data
+        this.portals = res.data.map(p=>{
+          return {
+            id: p.id + '',
+            name: p.name
+          }
+        })
       }
     })
     this.queryList()
