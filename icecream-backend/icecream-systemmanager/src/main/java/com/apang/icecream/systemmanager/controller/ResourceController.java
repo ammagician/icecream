@@ -136,19 +136,34 @@ public class ResourceController {
 
 	private List<Resource> groupByPortalId(List<Resource> list) {
 		Map<String, Resource> hash = new HashMap<String, Resource>();
+		Map<String, List<Resource>> group = new HashMap<String, List<Resource>>();
 		for (Resource r : list) {
 			if (r.getType() == 1) {
+				String id = r.getId().toString();
 				Resource p = new Resource();
 				p.setId(r.getId());
 				p.setName(r.getName());
-				p.setChildren(new ArrayList<Resource>());
-				hash.put(r.getId().toString(), p);
-				continue;
-			}
-
-			Resource p = hash.get(r.getPortalId());
-			if (p != null) {
-				p.getChildren().add(r);
+				
+				List<Resource> children = group.get(id);
+				if(children == null) {
+					children = new ArrayList<Resource>();
+				}
+				p.setChildren(children);
+				
+				hash.put(id, p);
+			}else {
+				String portalId = r.getPortalId().toString();
+				Resource p = hash.get(portalId);
+				if (p != null) {
+					p.getChildren().add(r);
+				}else {
+					List<Resource> children = group.get(portalId);
+					if(children == null) {
+						children = new ArrayList<Resource>();
+					}
+					children.add(r);
+					group.put(portalId, children);
+				}
 			}
 		}
 		return new ArrayList<Resource>(hash.values());
